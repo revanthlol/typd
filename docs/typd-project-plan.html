@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>typd — Project Plan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;800&display=swap');
+
+  :root {
+    --bg: #0d0d0f;
+    --bg2: #131316;
+    --bg3: #1a1a1f;
+    --border: #252530;
+    --border2: #32323f;
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #555568;
+    --accent: #5b8aff;
+    --accent2: #3d6ae8;
+    --green: #3ecf6e;
+    --yellow: #f5c842;
+    --red: #ff5f6d;
+    --purple: #a78bfa;
+    --cyan: #22d3ee;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-display: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    padding: 48px 60px 36px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+
+  .header-left h1 {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .header-left h1 span { color: var(--accent); }
+
+  .header-left p {
+    color: var(--text2);
+    font-size: 12px;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .overall-progress {
+    font-size: 11px;
+    color: var(--text2);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .progress-bar-wrap {
+    width: 260px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .overall-stats {
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 60px 80px;
+  }
+
+  /* PHASE */
+  .phase {
+    margin-bottom: 48px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .phase-header {
+    background: var(--bg2);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    user-select: none;
+  }
+
+  .phase-header:hover { background: var(--bg3); }
+
+  .phase-number {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    min-width: 60px;
+  }
+
+  .phase-title {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .phase-tag {
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .tag-systems { background: rgba(91,138,255,0.12); color: var(--accent); border: 1px solid rgba(91,138,255,0.25); }
+  .tag-engine  { background: rgba(62,207,110,0.1);  color: var(--green);  border: 1px solid rgba(62,207,110,0.2); }
+  .tag-ui      { background: rgba(167,139,250,0.1); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+  .tag-input   { background: rgba(34,211,238,0.1);  color: var(--cyan);   border: 1px solid rgba(34,211,238,0.2); }
+  .tag-logic   { background: rgba(245,200,66,0.1);  color: var(--yellow); border: 1px solid rgba(245,200,66,0.2); }
+  .tag-polish  { background: rgba(255,95,109,0.1);  color: var(--red);    border: 1px solid rgba(255,95,109,0.2); }
+
+  .phase-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .phase-bar-wrap {
+    width: 80px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .phase-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .phase-pct {
+    font-size: 11px;
+    color: var(--text3);
+    min-width: 32px;
+    text-align: right;
+  }
+
+  .phase-chevron {
+    color: var(--text3);
+    transition: transform 0.2s;
+    font-size: 10px;
+  }
+
+  .phase.collapsed .phase-chevron { transform: rotate(-90deg); }
+  .phase.collapsed .phase-body { display: none; }
+
+  /* PHASE BODY */
+  .phase-body {
+    padding: 24px 28px;
+  }
+
+  .duration-badge {
+    display: inline-block;
+    font-size: 10px;
+    color: var(--text3);
+    border: 1px solid var(--border2);
+    padding: 2px 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* SECTIONS */
+  .section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text3);
+    margin-bottom: 12px;
+    margin-top: 24px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title:first-of-type { margin-top: 0; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; }
+
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li:hover { background: rgba(91,138,255,0.03); margin: 0 -28px; padding: 9px 28px; }
+
+  .checklist li.done .task-text {
+    color: var(--text3);
+    text-decoration: line-through;
+    text-decoration-color: var(--border2);
+  }
+
+  .check-box {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    background: var(--bg);
+  }
+
+  .checklist li.done .check-box {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .check-icon {
+    display: none;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+  .checklist li.done .check-icon { display: block; }
+
+  .task-text { flex: 1; color: var(--text); }
+
+  .task-note {
+    font-size: 11px;
+    color: var(--text3);
+    display: block;
+    margin-top: 2px;
+  }
+
+  .task-proto {
+    font-size: 10px;
+    color: var(--accent);
+    background: rgba(91,138,255,0.08);
+    padding: 1px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+    border: 1px solid rgba(91,138,255,0.15);
+    flex-shrink: 0;
+  }
+
+  /* TESTS */
+  .test-grid {
+    display: grid;
+    gap: 8px;
+  }
+
+  .test-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .test-item:hover { border-color: var(--border2); }
+
+  .test-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text3);
+    flex-shrink: 0;
+    margin-top: 5px;
+    transition: background 0.15s;
+  }
+
+  .test-item.pass .test-status  { background: var(--green); }
+  .test-item.fail .test-status  { background: var(--red); }
+  .test-item.skip .test-status  { background: var(--yellow); }
+
+  .test-content { flex: 1; }
+
+  .test-name {
+    color: var(--text);
+    font-size: 12px;
+  }
+
+  .test-expect {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 3px;
+  }
+
+  .test-expect code {
+    color: var(--cyan);
+    background: rgba(34,211,238,0.07);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+  }
+
+  .test-controls {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .test-btn {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text3);
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.1s;
+  }
+
+  .test-btn:hover { color: var(--text); border-color: var(--border2); }
+  .test-btn.pass-btn:hover { color: var(--green); border-color: var(--green); }
+  .test-btn.fail-btn:hover { color: var(--red); border-color: var(--red); }
+  .test-btn.skip-btn:hover { color: var(--yellow); border-color: var(--yellow); }
+
+  /* NOTES */
+  .phase-notes {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--yellow);
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 20px;
+  }
+
+  .phase-notes strong { color: var(--yellow); font-weight: 500; }
+
+  /* SUMMARY GRID */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .stat-value span { color: var(--accent); }
+
+  /* RESET BTN */
+  .reset-btn {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 6px 16px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text3);
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.1s;
+    margin-top: 8px;
+  }
+
+  .reset-btn:hover { color: var(--red); border-color: var(--red); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1><span>typd</span></h1>
+    <p>WAYLAND VIRTUAL KEYBOARD + INTELLIGENT TEXT SUGGESTIONS FOR LINUX</p>
+  </div>
+  <div class="header-right">
+    <div class="overall-progress">OVERALL PROGRESS</div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="overallBar"></div>
+    </div>
+    <div class="overall-stats" id="overallStats">0 / 0 tasks &nbsp;·&nbsp; 0 / 0 tests</div>
+    <button class="reset-btn" onclick="resetAll()">RESET ALL</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="summary-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Phases</div>
+      <div class="stat-value"><span>8</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Target Duration</div>
+      <div class="stat-value">~<span>8</span> wks</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Stack</div>
+      <div class="stat-value" style="font-size:18px;">C<span>11</span></div>
+    </div>
+  </div>
+
+  <!-- ─────────── PHASE 1 ─────────── -->
+  <div class="phase" id="phase-1">
+    <div class="phase-header" onclick="togglePhase('phase-1')">
+      <div class="phase-number">PHASE 01</div>
+      <div class="phase-title">Wayland Foundation & Layer Shell Window</div>
+      <div class="phase-tag tag-systems">Systems</div>
+      <div class="phase-progress">
+        <div class="phase-bar-wrap"><div class="phase-bar-fill" id="bar-phase-1"></div></div>
+        <div class="phase-pct" id="pct-phase-1">0%</div>
+      </div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="duration-badge">⏱ ESTIMATED: 5–7 DAYS</div>
+
+      <div class="section-title">Implementation Tasks</div>
+      <ul class="checklist" id="tasks-phase-1">
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Set up meson build system with wayland-scanner integration
+            <span class="task-note">Generate protocol bindings from .xml files at build time</span>
+          </div>
+          <div class="task-proto">wayland-scanner</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Connect to Wayland display and registry, enumerate globals</div>
+          <div class="task-proto">wl_display_connect</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Bind wl_compositor, wl_shm, wlr_layer_shell_v1 globals</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Create wl_surface, assign to layer shell as BOTTOM_LAYER overlay</div>
+          <div class="task-proto">wlr-layer-shell-v1</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Anchor surface to bottom of screen, set exclusive zone to reserve space</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Allocate shared memory buffer (wl_shm_pool) and paint a solid fill to verify rendering pipeline</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Set up event loop (wl_display_dispatch) with signal handlers (SIGINT, SIGTERM for clean exit)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Integrate libcairo with Wayland shm buffer for drawing context</div>
+          <div class="task-proto">libcairo</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Draw static keyboard background, key grid, key labels using Cairo</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Handle configure events (compositor requesting resize) and buffer swap</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Handle pointer events (wl_pointer): seat binding, enter/leave, button clicks, coordinate mapping to key grid</div>
+          <div class="task-proto">wl_seat</div>
+        </li>
+      </ul>
+
+      <div class="section-title">Tests</div>
+      <div class="test-grid" id="tests-phase-1">
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Layer shell surface renders on Hyprland</div>
+            <div class="test-expect">Expected: keyboard appears anchored to screen bottom, does not overlap other windows</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Exclusive zone respected</div>
+            <div class="test-expect">Expected: maximized windows shrink to not overlap keyboard area</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Mouse click inside keyboard area detected</div>
+            <div class="test-expect">Expected: <code>pointer.button</code> event fires with correct surface-local coordinates</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-content">
+            <div class="test-name">SIGINT exits cleanly</div>
+            <div class="test-expect">Expected: no compositor crash, layer shell surface is destroyed properly, no orphaned surfaces</div>
+          </div>
+          <div class="test-status"></div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-notes">
+        <strong>⚠ Watch out:</strong> wl_shm buffer must be fully allocated before commit. Double-buffering needed — alternate between two buffers to avoid visual tearing during redraws.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────── PHASE 2 ─────────── -->
+  <div class="phase" id="phase-2">
+    <div class="phase-header" onclick="togglePhase('phase-2')">
+      <div class="phase-number">PHASE 02</div>
+      <div class="phase-title">Virtual Keyboard Protocol — Key Injection</div>
+      <div class="phase-tag tag-input">Input</div>
+      <div class="phase-progress">
+        <div class="phase-bar-wrap"><div class="phase-bar-fill" id="bar-phase-2"></div></div>
+        <div class="phase-pct" id="pct-phase-2">0%</div>
+      </div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="duration-badge">⏱ ESTIMATED: 5–7 DAYS</div>
+
+      <div class="section-title">Implementation Tasks</div>
+      <ul class="checklist" id="tasks-phase-2">
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Bind zwp_virtual_keyboard_manager_v1 from registry</div>
+          <div class="task-proto">virtual-keyboard-v1</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Create zwp_virtual_keyboard_v1 object from manager + wl_seat</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Load xkb keymap via libxkbcommon, serialize to string, send to virtual keyboard</div>
+          <div class="task-proto">libxkbcommon</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Map key label grid positions to xkb keysyms and keycodes</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement key_down() and key_up() — send key events with correct timestamp</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement keyboard layers (lowercase / uppercase / numbers / symbols), track active layer state</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Visual key press feedback: highlight tapped key on pointer down, restore on pointer up</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Dirty-rect redraw: only repaint the pressed key region, not full surface</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement long-press timer (500ms) for alternate character popup</div>
+        </li>
+      </ul>
+
+      <div class="section-title">Tests</div>
+      <div class="test-grid" id="tests-phase-2">
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Tap 'a' in a text field → 'a' appears</div>
+            <div class="test-expect">Expected: character inserted in focused GTK/Qt app text input</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Shift layer switches correctly</div>
+            <div class="test-expect">Expected: tap Shift → layer flips to uppercase, tap again → returns to lowercase</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Backspace deletes character</div>
+            <div class="test-expect">Expected: ⌫ key sends KEY_BACKSPACE, deletes one character in active app</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Key injection works in Firefox address bar</div>
+            <div class="test-expect">Expected: typed characters appear correctly in Firefox URL bar</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+      </div>
+      <div class="phase-notes">
+        <strong>⚠ Watch out:</strong> Timestamp in key events must be monotonically increasing milliseconds. Use <code>clock_gettime(CLOCK_MONOTONIC)</code>. Sending stale timestamps causes some apps to drop events.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────── PHASE 3 ─────────── -->
+  <div class="phase" id="phase-3">
+    <div class="phase-header" onclick="togglePhase('phase-3')">
+      <div class="phase-number">PHASE 03</div>
+      <div class="phase-title">Suggestion Engine — Trie + BK-Tree</div>
+      <div class="phase-tag tag-engine">Engine</div>
+      <div class="phase-progress">
+        <div class="phase-bar-wrap"><div class="phase-bar-fill" id="bar-phase-3"></div></div>
+        <div class="phase-pct" id="pct-phase-3">0%</div>
+      </div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="duration-badge">⏱ ESTIMATED: 7–10 DAYS</div>
+
+      <div class="section-title">Implementation Tasks</div>
+      <ul class="checklist" id="tasks-phase-3">
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Source and prepare word frequency list (~50k words with frequency scores)
+            <span class="task-note">Use wordfreq dataset or Google Ngram top-50k. Format: "word\tfrequency\n"</span>
+          </div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement Trie data structure (insert, prefix_search returning top-N by frequency)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Load words.freq at startup, build Trie in memory (~10MB target)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement Levenshtein distance function (iterative DP, not recursive)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement BK-Tree (insert all words, search with max_distance = 2)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Combine: while typing → Trie prefix search; on word complete (space pressed) → BK-Tree fuzzy correct if typed word not in dict</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Suggestion result struct: word string + score + is_correction flag</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Write unit tests for Trie (prefix_search returns correct top-3) and BK-Tree (finds word at distance ≤2)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Benchmark: suggestion lookup must complete in < 5ms on i5-7100U</div>
+        </li>
+      </ul>
+
+      <div class="section-title">Tests</div>
+      <div class="test-grid" id="tests-phase-3">
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Trie: prefix "hel" returns ["hello", "help", "held"] (top-3)</div>
+            <div class="test-expect">Expected: results sorted by frequency descending</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">BK-Tree: "helo" → corrects to "hello" (distance 1)</div>
+            <div class="test-expect">Expected: correction triggered, <code>is_correction = true</code> in result</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Correct word is NOT corrected</div>
+            <div class="test-expect">Expected: "hello" → no BK-Tree correction triggered (word is in dict)</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Lookup performance ≤ 5ms</div>
+            <div class="test-expect">Expected: 1000 consecutive Trie lookups complete in under 5 seconds (5ms each)</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Startup memory usage ≤ 15MB</div>
+            <div class="test-expect">Expected: <code>valgrind --tool=massif</code> peak heap ≤ 15MB after Trie fully loaded</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────── PHASE 4 ─────────── -->
+  <div class="phase" id="phase-4">
+    <div class="phase-header" onclick="togglePhase('phase-4')">
+      <div class="phase-number">PHASE 04</div>
+      <div class="phase-title">Suggestion Strip on Virtual Keyboard + text-input-v3</div>
+      <div class="phase-tag tag-ui">UI</div>
+      <div class="phase-progress">
+        <div class="phase-bar-wrap"><div class="phase-bar-fill" id="bar-phase-4"></div></div>
+        <div class="phase-pct" id="pct-phase-4">0%</div>
+      </div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="duration-badge">⏱ ESTIMATED: 5–7 DAYS</div>
+
+      <div class="section-title">Implementation Tasks</div>
+      <ul class="checklist" id="tasks-phase-4">
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Bind zwp_text_input_manager_v3, create text input object</div>
+          <div class="task-proto">text-input-v3</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement surrounding_text event handler — extract current word being typed from buffer + cursor position</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Pipe extracted word to suggestion engine, get top-3 results</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Draw suggestion strip at top of keyboard surface: 3 pill-shaped buttons with suggestion text</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Tap suggestion → commit via zwp_text_input_v3 (delete_surrounding_text to erase partial word, then commit_string with full word)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Debounce suggestion update: only recalculate 150ms after last key tap (avoids thrashing on fast typing)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Handle text-input enter/leave events: clear suggestions when focus leaves a text field</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Graceful degradation: if app doesn't send surrounding_text, hide suggestion strip silently</div>
+        </li>
+      </ul>
+
+      <div class="section-title">Tests</div>
+      <div class="test-grid" id="tests-phase-4">
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Typing "hel" on virtual keyboard shows suggestions in strip</div>
+            <div class="test-expect">Expected: strip updates with ["hello", "help", "held"] within 150ms of last tap</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Tapping suggestion replaces partial word correctly</div>
+            <div class="test-expect">Expected: "hel" → tap "hello" → "hel" deleted, "hello " inserted with trailing space</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Suggestion strip hidden in terminal (foot)</div>
+            <div class="test-expect">Expected: strip area is empty / dimmed when focus is in a terminal</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────── PHASE 5 ─────────── -->
+  <div class="phase" id="phase-5">
+    <div class="phase-header" onclick="togglePhase('phase-5')">
+      <div class="phase-number">PHASE 05</div>
+      <div class="phase-title">Physical Keyboard Mode — Floating Popup</div>
+      <div class="phase-tag tag-input">Input</div>
+      <div class="phase-progress">
+        <div class="phase-bar-wrap"><div class="phase-bar-fill" id="bar-phase-5"></div></div>
+        <div class="phase-pct" id="pct-phase-5">0%</div>
+      </div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="duration-badge">⏱ ESTIMATED: 7–10 DAYS</div>
+
+      <div class="section-title">Implementation Tasks</div>
+      <ul class="checklist" id="tasks-phase-5">
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Bind zwp_input_method_manager_v2, create input method object</div>
+          <div class="task-proto">input-method-v2</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement surrounding_text callback from input_method — extract word at cursor</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Request zwp_input_method_keyboard_grab_v2 — grab keyboard to intercept shortcuts before app sees them</div>
+          <div class="task-proto">keyboard-grab-v2</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Shortcut handler: keys 1/2/3 select suggestion[0/1/2], Tab cycles, Esc dismisses — swallow these, forward all others to app</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Create popup surface via zwp_input_popup_surface_v2 — compositor auto-positions at cursor</div>
+          <div class="task-proto">input-popup-v2</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Render floating suggestion bar (Cairo): 3 suggestions with [1] [2] [3] labels, horizontal row</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Commit selected suggestion via input_method commit_string, clear preedit</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Debounce: show popup 150ms after last keystroke, hide on word commit or Esc</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Handle simultaneous mode: if virtual keyboard is also active, disable physical keyboard popup to avoid duplication</div>
+        </li>
+      </ul>
+
+      <div class="section-title">Tests</div>
+      <div class="test-grid" id="tests-phase-5">
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Popup appears near cursor after typing "hel" with physical keyboard</div>
+            <div class="test-expect">Expected: popup visible within 150ms, positioned above cursor by compositor</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Press "1" selects first suggestion, "1" does NOT appear in text field</div>
+            <div class="test-expect">Expected: suggestion committed, keystroke swallowed, app never sees "1"</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Esc dismisses popup, subsequent "1" keypress goes to app</div>
+            <div class="test-expect">Expected: popup dismissed, next keystrokes no longer intercepted</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Click on popup suggestion commits word</div>
+            <div class="test-expect">Expected: mouse click on suggestion pill → word inserted, popup dismissed</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+      </div>
+      <div class="phase-notes">
+        <strong>⚠ Watch out:</strong> zwp_input_popup_surface_v2 support in Hyprland — verify it's implemented before relying on it. If missing, fallback to fixed bottom-of-screen position as a stopgap.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────── PHASE 6 ─────────── -->
+  <div class="phase" id="phase-6">
+    <div class="phase-header" onclick="togglePhase('phase-6')">
+      <div class="phase-number">PHASE 06</div>
+      <div class="phase-title">Smart Context Detection (4-Layer System)</div>
+      <div class="phase-tag tag-logic">Logic</div>
+      <div class="phase-progress">
+        <div class="phase-bar-wrap"><div class="phase-bar-fill" id="bar-phase-6"></div></div>
+        <div class="phase-pct" id="pct-phase-6">0%</div>
+      </div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="duration-badge">⏱ ESTIMATED: 5–7 DAYS</div>
+
+      <div class="section-title">Implementation Tasks</div>
+      <ul class="checklist" id="tasks-phase-6">
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement Layer 1: app_id lookup table — hardcoded terminal blacklist, doc app whitelist, editor list for Layer 2</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Subscribe to wl_output / xdg_output events to track active app_id (via compositor's window focus events or wlr-foreign-toplevel-management)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement Layer 2: window title parser — regex to extract filename.ext from title string</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Extension lookup table: prose extensions → ON, code extensions → OFF, unknown → OFF</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement Layer 3: content heuristic scorer on surrounding text (300-char sample, token scoring)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Implement Layer 4: rules.conf parser (app:id [ext:.ext] = on|off syntax)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Hot-reload rules.conf on SIGHUP without restarting daemon</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Wire detection result to suggestion engine: SUGGESTIONS_ON / SUGGESTIONS_OFF state drives whether popup/strip are shown</div>
+        </li>
+      </ul>
+
+      <div class="section-title">Tests</div>
+      <div class="test-grid" id="tests-phase-6">
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Foot terminal → suggestions OFF (Layer 1)</div>
+            <div class="test-expect">Expected: no popup appears when typing in foot, confirmed by app_id match</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">VS Code with .md file → suggestions ON (Layer 2)</div>
+            <div class="test-expect">Expected: popup appears, title parsed as "README.md — Visual Studio Code"</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">VS Code with .py file → suggestions OFF (Layer 2)</div>
+            <div class="test-expect">Expected: no popup, extension ".py" hits code blacklist</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Content heuristic disables for code-like text (Layer 3)</div>
+            <div class="test-expect">Expected: surrounding text with "import os\ndef main():\n    {" scores ≥4, suggestions OFF</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">rules.conf override: zed = off → suggestions OFF in Zed regardless of file (Layer 4)</div>
+            <div class="test-expect">Expected: even with .md file, user rule wins, suggestions OFF in Zed</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">SIGHUP reloads rules.conf without restart</div>
+            <div class="test-expect">Expected: edit rules.conf, send SIGHUP, new rules apply on next keystroke</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────── PHASE 7 ─────────── -->
+  <div class="phase" id="phase-7">
+    <div class="phase-header" onclick="togglePhase('phase-7')">
+      <div class="phase-number">PHASE 07</div>
+      <div class="phase-title">Configuration, Themes & Multi-Monitor</div>
+      <div class="phase-tag tag-polish">Polish</div>
+      <div class="phase-progress">
+        <div class="phase-bar-wrap"><div class="phase-bar-fill" id="bar-phase-7"></div></div>
+        <div class="phase-pct" id="pct-phase-7">0%</div>
+      </div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="duration-badge">⏱ ESTIMATED: 5–7 DAYS</div>
+
+      <div class="section-title">Implementation Tasks</div>
+      <ul class="checklist" id="tasks-phase-7">
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">TOML config parser (write minimal one or use a single-header lib like tomlc99)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Load config from ~/.config/typd/config.toml, apply keyboard height, theme, suggestion delay</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Theme system: dark + light presets, custom hex colors via config</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">JSON layout files for keyboard layouts (QWERTY, AZERTY, Dvorak stubs)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Multi-monitor: enumerate outputs via xdg_output_v1, keyboard appears on the active output only</div>
+          <div class="task-proto">xdg-output-v1</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Systemd user service file (typd.service) for autostart</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Toggle show/hide keyboard via IPC (Unix socket or DBus signal) — for binding to hotkey</div>
+        </li>
+      </ul>
+
+      <div class="section-title">Tests</div>
+      <div class="test-grid" id="tests-phase-7">
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Dark / light theme switch applies correctly</div>
+            <div class="test-expect">Expected: changing theme in config.toml + reload → keyboard redraws with new colors</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Dual monitor: keyboard appears only on primary output</div>
+            <div class="test-expect">Expected: no duplicate keyboard on second monitor</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Toggle hide/show via IPC</div>
+            <div class="test-expect">Expected: <code>typd --toggle</code> sends IPC signal, keyboard appears/disappears</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────── PHASE 8 ─────────── -->
+  <div class="phase" id="phase-8">
+    <div class="phase-header" onclick="togglePhase('phase-8')">
+      <div class="phase-number">PHASE 08</div>
+      <div class="phase-title">Stability, Testing, Packaging & Release</div>
+      <div class="phase-tag tag-polish">Polish</div>
+      <div class="phase-progress">
+        <div class="phase-bar-wrap"><div class="phase-bar-fill" id="bar-phase-8"></div></div>
+        <div class="phase-pct" id="pct-phase-8">0%</div>
+      </div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="duration-badge">⏱ ESTIMATED: 5–7 DAYS</div>
+
+      <div class="section-title">Implementation Tasks</div>
+      <ul class="checklist" id="tasks-phase-8">
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Run valgrind memcheck — fix all memory leaks and invalid reads</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Address sanitizer build (ASAN + UBSAN) — fix all flagged issues</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Write README.md: install, build, config, rules, FAQ</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Write PKGBUILD for AUR submission</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Tag v1.0.0 on GitHub, write release notes</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Test on Sway (secondary compositor target)</div>
+        </li>
+        <li onclick="toggle(this)">
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="task-text">Verify binary size < 2MB stripped, RAM idle < 15MB</div>
+        </li>
+      </ul>
+
+      <div class="section-title">Final Acceptance Tests</div>
+      <div class="test-grid" id="tests-phase-8">
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Zero memory leaks under valgrind for 10-minute session</div>
+            <div class="test-expect">Expected: <code>0 bytes in 0 blocks lost</code> in definitely lost / indirectly lost</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Binary size ≤ 2MB stripped</div>
+            <div class="test-expect">Expected: <code>size typd</code> stripped binary ≤ 2097152 bytes</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Full end-to-end: type a sentence with typos, correct all via suggestions</div>
+            <div class="test-expect">Expected: "I am goin to thhe storr" → corrected to "I am going to the store" via popup selections</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+        <div class="test-item" onclick="cycleTest(this)">
+          <div class="test-status"></div>
+          <div class="test-content">
+            <div class="test-name">Runs on fresh Arch Linux + Hyprland install with only listed deps</div>
+            <div class="test-expect">Expected: builds and runs with only libwayland, libcairo, libxkbcommon installed</div>
+          </div>
+          <div class="test-controls">
+            <button class="test-btn pass-btn" onclick="setTest(event,this.closest('.test-item'),'pass')">PASS</button>
+            <button class="test-btn fail-btn" onclick="setTest(event,this.closest('.test-item'),'fail')">FAIL</button>
+            <button class="test-btn skip-btn" onclick="setTest(event,this.closest('.test-item'),'skip')">SKIP</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'typd_plan_v1';
+
+  function getState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+  }
+
+  function saveState(s) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+  }
+
+  function toggle(li) {
+    li.classList.toggle('done');
+    persistAll();
+    updateAll();
+  }
+
+  function cycleTest(el) {
+    const states = ['', 'pass', 'fail', 'skip'];
+    const cur = states.indexOf([...el.classList].find(c => states.includes(c)) || '');
+    el.classList.remove(...states.slice(1));
+    el.classList.add(states[(cur + 1) % states.length]);
+    persistAll();
+    updateAll();
+  }
+
+  function setTest(e, el, state) {
+    e.stopPropagation();
+    el.classList.remove('pass', 'fail', 'skip');
+    el.classList.add(state);
+    persistAll();
+    updateAll();
+  }
+
+  function togglePhase(id) {
+    document.getElementById(id).classList.toggle('collapsed');
+  }
+
+  function persistAll() {
+    const state = {};
+    // Tasks
+    document.querySelectorAll('[id^="tasks-phase-"]').forEach(ul => {
+      const phaseId = ul.id.replace('tasks-', '');
+      state[ul.id] = [...ul.querySelectorAll('li')].map(li => li.classList.contains('done'));
+    });
+    // Tests
+    document.querySelectorAll('[id^="tests-phase-"]').forEach(div => {
+      state[div.id] = [...div.querySelectorAll('.test-item')].map(ti => {
+        if (ti.classList.contains('pass')) return 'pass';
+        if (ti.classList.contains('fail')) return 'fail';
+        if (ti.classList.contains('skip')) return 'skip';
+        return '';
+      });
+    });
+    saveState(state);
+  }
+
+  function restoreAll() {
+    const state = getState();
+    document.querySelectorAll('[id^="tasks-phase-"]').forEach(ul => {
+      const saved = state[ul.id];
+      if (!saved) return;
+      [...ul.querySelectorAll('li')].forEach((li, i) => {
+        if (saved[i]) li.classList.add('done');
+      });
+    });
+    document.querySelectorAll('[id^="tests-phase-"]').forEach(div => {
+      const saved = state[div.id];
+      if (!saved) return;
+      [...div.querySelectorAll('.test-item')].forEach((ti, i) => {
+        if (saved[i]) { ti.classList.remove('pass','fail','skip'); if(saved[i]) ti.classList.add(saved[i]); }
+      });
+    });
+  }
+
+  function updateAll() {
+    let totalTasks = 0, doneTasks = 0, totalTests = 0, passTests = 0;
+
+    for (let p = 1; p <= 8; p++) {
+      const ul = document.getElementById(`tasks-phase-${p}`);
+      const testDiv = document.getElementById(`tests-phase-${p}`);
+      if (!ul) continue;
+
+      const items = ul.querySelectorAll('li');
+      const done = ul.querySelectorAll('li.done');
+      const pct = items.length ? Math.round((done.length / items.length) * 100) : 0;
+
+      const bar = document.getElementById(`bar-phase-${p}`);
+      const pctEl = document.getElementById(`pct-phase-${p}`);
+      if (bar) bar.style.width = pct + '%';
+      if (pctEl) pctEl.textContent = pct + '%';
+
+      totalTasks += items.length;
+      doneTasks += done.length;
+
+      if (testDiv) {
+        const tests = testDiv.querySelectorAll('.test-item');
+        totalTests += tests.length;
+        passTests += testDiv.querySelectorAll('.test-item.pass').length;
+      }
+    }
+
+    const overall = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
+    document.getElementById('overallBar').style.width = overall + '%';
+    document.getElementById('overallStats').textContent =
+      `${doneTasks} / ${totalTasks} tasks  ·  ${passTests} / ${totalTests} tests passed`;
+  }
+
+  function resetAll() {
+    if (!confirm('Reset ALL progress? This cannot be undone.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    document.querySelectorAll('.checklist li').forEach(li => li.classList.remove('done'));
+    document.querySelectorAll('.test-item').forEach(ti => ti.classList.remove('pass','fail','skip'));
+    updateAll();
+  }
+
+  restoreAll();
+  updateAll();
+</script>
+</body>
+</html>

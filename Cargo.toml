@@ -8,11 +8,13 @@ name = "typd"
 path = "src/main.rs"
 
 [dependencies]
-wayland-client        = "0.31"
-wayland-protocols-wlr = "0.2"
-wayland-protocols     = "0.31"
-smithay-client-toolkit = "0.18"
-cairo-rs              = { version = "0.18", features = ["use_glib"] }
-xkbcommon             = { version = "0.7", features = ["wayland"] }
+wayland-client          = "0.31"
+wayland-protocols-wlr   = { version = "0.2", features = ["client"] }
+wayland-protocols       = { version = "0.31", features = ["client", "unstable"] }
+smithay-client-toolkit  = { version = "0.18", default-features = false,
+                            features = ["calloop", "calloop-wayland-source"] }
+calloop                 = "0.12"
+calloop-wayland-source  = "0.2"
+cairo-rs                = { version = "0.18", default-features = false }
 
 [dev-dependencies]

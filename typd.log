@@ -1,0 +1,134 @@
+registry: wl_seat v9
+registry: wl_data_device_manager v3
+registry: wl_compositor v6
+registry: wl_subcompositor v1
+registry: wl_shm v2
+registry: wp_viewporter v1
+registry: wp_tearing_control_manager_v1 v1
+registry: wp_fractional_scale_manager_v1 v1
+registry: zxdg_output_manager_v1 v3
+registry: wp_cursor_shape_manager_v1 v2
+registry: zwp_idle_inhibit_manager_v1 v1
+registry: zwp_relative_pointer_manager_v1 v1
+registry: zxdg_decoration_manager_v1 v1
+registry: wp_alpha_modifier_v1 v1
+registry: zwlr_gamma_control_manager_v1 v1
+registry: ext_foreign_toplevel_list_v1 v1
+registry: zwp_pointer_gestures_v1 v3
+registry: zwlr_foreign_toplevel_manager_v1 v3
+registry: zwp_keyboard_shortcuts_inhibit_manager_v1 v1
+registry: zwp_text_input_manager_v1 v1
+registry: zwp_text_input_manager_v3 v1
+registry: zwp_pointer_constraints_v1 v1
+registry: zwlr_output_power_manager_v1 v1
+registry: xdg_activation_v1 v1
+registry: ext_idle_notifier_v1 v2
+registry: hyprland_lock_notifier_v1 v1
+registry: ext_session_lock_manager_v1 v1
+registry: zwp_input_method_manager_v2 v1
+registry: zwp_virtual_keyboard_manager_v1 v1
+registry: zwlr_virtual_pointer_manager_v1 v2
+registry: zwlr_output_manager_v1 v4
+registry: org_kde_kwin_server_decoration_manager v1
+registry: hyprland_focus_grab_manager_v1 v1
+registry: zwp_tablet_manager_v2 v1
+registry: zwlr_layer_shell_v1 v5
+registry: wp_presentation v2
+registry: xdg_wm_base v7
+registry: zwlr_data_control_manager_v1 v2
+registry: zwp_primary_selection_device_manager_v1 v1
+registry: xwayland_shell_v1 v1
+registry: hyprland_toplevel_mapping_manager_v1 v1
+registry: hyprland_global_shortcuts_manager_v1 v1
+registry: xdg_wm_dialog_v1 v1
+registry: wp_single_pixel_buffer_manager_v1 v1
+registry: wp_security_context_manager_v1 v1
+registry: hyprland_ctm_control_manager_v1 v2
+registry: hyprland_surface_manager_v1 v2
+registry: wp_content_type_manager_v1 v1
+registry: xdg_toplevel_tag_manager_v1 v1
+registry: xdg_system_bell_v1 v1
+registry: ext_workspace_manager_v1 v1
+registry: ext_data_control_manager_v1 v1
+registry: wp_pointer_warp_v1 v1
+registry: wp_fifo_manager_v1 v1
+registry: wp_commit_timing_manager_v1 v1
+registry: zwlr_screencopy_manager_v1 v3
+registry: hyprland_toplevel_export_manager_v1 v2
+registry: ext_output_image_capture_source_manager_v1 v1
+registry: ext_foreign_toplevel_image_capture_source_manager_v1 v1
+registry: ext_image_copy_capture_manager_v1 v1
+registry: wp_color_manager_v1 v1
+registry: wp_drm_lease_device_v1 v1
+registry: wp_linux_drm_syncobj_manager_v1 v1
+registry: wl_drm v2
+registry: zwp_linux_dmabuf_v1 v5
+registry: wl_output v4
+seat capabilities: 3
+typd: loaded 96 words
+Virtual keyboard created successfully
+Sending keymap (35356 bytes)...
+Keymap sent successfully
+DEBUG: waiting 2s then injecting 'A'...
+send_key: evdev 30 -> vk_code 38
+DEBUG: 'A' injected.
+pointer motion: 809.5 97.4
+pointer motion: 809.5 97.4
+pointer motion: 804.2 86.8
+pointer motion: 800.7 80.7
+pointer motion: 783.8 54.2
+pointer motion: 776.5 45.6
+pointer motion: 764.9 32.9
+pointer motion: 755.4 25.5
+pointer motion: 742.6 13.8
+pointer motion: 727.7 1.2
+pointer motion: 210.9 3.6
+pointer motion: 210.9 13.2
+pointer motion: 211.8 20.3
+pointer motion: 213.5 25.6
+pointer motion: 215.3 29.9
+pointer motion: 217.9 34.3
+pointer motion: 221.4 39.6
+pointer motion: 225.8 44.9
+pointer motion: 230.2 50.2
+pointer motion: 232.9 55.4
+pointer motion: 237.2 60.7
+pointer motion: 239.9 64.2
+pointer motion: 242.5 67.7
+pointer motion: 244.3 70.4
+pointer motion: 246.0 73.0
+pointer motion: 246.9 74.8
+pointer motion: 248.7 76.5
+pointer motion: 249.5 77.4
+pointer motion: 250.4 78.3
+pointer motion: 251.3 79.2
+pointer motion: 252.2 80.0
+pointer motion: 253.1 80.9
+pointer motion: 254.8 80.9
+pointer motion: 256.6 80.9
+pointer motion: 257.5 80.9
+pointer motion: 258.3 80.9
+pointer motion: 258.3 86.1
+pointer motion: 258.3 89.6
+pointer motion: 258.3 93.1
+pointer motion: 258.3 96.6
+pointer motion: 258.3 99.3
+pointer motion: 258.3 102.8
+pointer motion: 258.3 105.4
+pointer motion: 258.3 107.2
+pointer motion: 258.3 108.0
+pointer motion: 258.3 109.8
+pointer motion: 258.3 110.7
+pointer motion: 258.3 111.6
+pointer motion: 263.6 100.1
+pointer motion: 266.3 92.2
+pointer motion: 268.0 86.9
+pointer motion: 270.7 79.9
+pointer motion: 273.3 73.7
+pointer motion: 278.7 62.0
+pointer motion: 283.6 49.3
+pointer motion: 287.4 37.9
+pointer motion: 290.0 32.6
+pointer motion: 293.6 24.7
+pointer motion: 299.4 9.1
+pointer motion: 302.2 1.7

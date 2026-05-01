@@ -28,7 +28,7 @@
     This protocol aims at describing outputs in a way which is more in line
     with the concept of an output on desktop oriented systems.
 
-    Some information are more specific to the concept of an output for
+    Some information is more specific to the concept of an output for
     a desktop oriented system and may not make sense in other applications,
     such as IVI systems for example.
 

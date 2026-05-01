@@ -1,0 +1,354 @@
+registry: wl_seat v9
+registry: wl_data_device_manager v3
+registry: wl_compositor v6
+registry: wl_subcompositor v1
+registry: wl_shm v2
+registry: wp_viewporter v1
+registry: wp_tearing_control_manager_v1 v1
+registry: wp_fractional_scale_manager_v1 v1
+registry: zxdg_output_manager_v1 v3
+registry: wp_cursor_shape_manager_v1 v2
+registry: zwp_idle_inhibit_manager_v1 v1
+registry: zwp_relative_pointer_manager_v1 v1
+registry: zxdg_decoration_manager_v1 v1
+registry: wp_alpha_modifier_v1 v1
+registry: zwlr_gamma_control_manager_v1 v1
+registry: ext_foreign_toplevel_list_v1 v1
+registry: zwp_pointer_gestures_v1 v3
+registry: zwlr_foreign_toplevel_manager_v1 v3
+registry: zwp_keyboard_shortcuts_inhibit_manager_v1 v1
+registry: zwp_text_input_manager_v1 v1
+registry: zwp_text_input_manager_v3 v1
+registry: zwp_pointer_constraints_v1 v1
+registry: zwlr_output_power_manager_v1 v1
+registry: xdg_activation_v1 v1
+registry: ext_idle_notifier_v1 v2
+registry: hyprland_lock_notifier_v1 v1
+registry: ext_session_lock_manager_v1 v1
+registry: zwp_input_method_manager_v2 v1
+registry: zwp_virtual_keyboard_manager_v1 v1
+registry: zwlr_virtual_pointer_manager_v1 v2
+registry: zwlr_output_manager_v1 v4
+registry: org_kde_kwin_server_decoration_manager v1
+registry: hyprland_focus_grab_manager_v1 v1
+registry: zwp_tablet_manager_v2 v1
+registry: zwlr_layer_shell_v1 v5
+registry: wp_presentation v2
+registry: xdg_wm_base v7
+registry: zwlr_data_control_manager_v1 v2
+registry: zwp_primary_selection_device_manager_v1 v1
+registry: xwayland_shell_v1 v1
+registry: hyprland_toplevel_mapping_manager_v1 v1
+registry: hyprland_global_shortcuts_manager_v1 v1
+registry: xdg_wm_dialog_v1 v1
+registry: wp_single_pixel_buffer_manager_v1 v1
+registry: wp_security_context_manager_v1 v1
+registry: hyprland_ctm_control_manager_v1 v2
+registry: hyprland_surface_manager_v1 v2
+registry: wp_content_type_manager_v1 v1
+registry: xdg_toplevel_tag_manager_v1 v1
+registry: xdg_system_bell_v1 v1
+registry: ext_workspace_manager_v1 v1
+registry: ext_data_control_manager_v1 v1
+registry: wp_pointer_warp_v1 v1
+registry: wp_fifo_manager_v1 v1
+registry: wp_commit_timing_manager_v1 v1
+registry: zwlr_screencopy_manager_v1 v3
+registry: hyprland_toplevel_export_manager_v1 v2
+registry: ext_output_image_capture_source_manager_v1 v1
+registry: ext_foreign_toplevel_image_capture_source_manager_v1 v1
+registry: ext_image_copy_capture_manager_v1 v1
+registry: wp_color_manager_v1 v1
+registry: wp_drm_lease_device_v1 v1
+registry: wp_linux_drm_syncobj_manager_v1 v1
+registry: wl_drm v2
+registry: zwp_linux_dmabuf_v1 v5
+registry: wl_output v4
+seat capabilities: 3
+typd: loaded 96 words
+Virtual keyboard created successfully
+Sending keymap (35356 bytes)...
+Keymap sent successfully
+DEBUG: waiting 2s then injecting 'A'...
+send_key: evdev 30 -> vk_code 30
+DEBUG: 'A' injected.
+pointer motion: 246.2 -0.2
+pointer motion: 245.3 0.7
+pointer motion: 244.5 2.5
+pointer motion: 244.5 3.3
+pointer motion: 244.5 5.1
+pointer motion: 244.5 6.9
+pointer motion: 244.5 8.6
+pointer motion: 244.5 10.4
+pointer motion: 244.5 11.2
+pointer motion: 244.5 13.0
+pointer motion: 244.5 14.8
+pointer motion: 244.5 15.6
+pointer motion: 244.5 17.4
+pointer motion: 244.5 20.0
+pointer motion: 245.3 22.7
+pointer motion: 245.3 24.4
+pointer motion: 245.3 26.2
+pointer motion: 246.2 27.9
+pointer motion: 246.2 29.7
+pointer motion: 247.1 30.6
+pointer motion: 248.0 32.3
+pointer motion: 249.7 34.1
+pointer motion: 251.5 36.7
+pointer motion: 253.2 39.4
+pointer motion: 255.0 42.0
+pointer motion: 256.8 44.6
+pointer motion: 257.6 45.5
+pointer motion: 258.5 46.4
+pointer motion: 258.5 47.3
+pointer motion: 259.4 48.2
+pointer motion: 260.3 49.0
+pointer motion: 261.1 49.9
+pointer motion: 262.0 50.8
+pointer motion: 262.9 51.7
+pointer motion: 264.7 53.4
+pointer motion: 265.5 54.3
+pointer motion: 267.3 56.1
+pointer motion: 269.1 57.8
+pointer motion: 270.8 59.6
+pointer motion: 272.6 61.3
+pointer motion: 275.2 63.1
+pointer motion: 277.0 64.0
+pointer motion: 280.5 64.8
+pointer motion: 281.4 65.7
+pointer motion: 283.1 65.7
+pointer motion: 284.9 65.7
+pointer motion: 286.6 66.6
+pointer motion: 288.4 66.6
+pointer motion: 289.3 66.6
+pointer motion: 291.0 67.5
+pointer motion: 292.8 67.5
+pointer motion: 293.7 67.5
+pointer motion: 294.5 67.5
+pointer motion: 295.1 67.5
+pointer motion: 295.1 68.4
+pointer motion: 295.1 69.4
+pointer motion: 295.1 70.6
+pointer motion: 295.1 71.2
+pointer motion: 295.1 72.7
+pointer motion: 295.1 73.5
+pointer motion: 295.1 74.2
+pointer motion: 295.1 75.1
+pointer motion: 295.1 76.6
+pointer motion: 295.1 77.4
+pointer motion: 295.1 78.1
+pointer motion: 295.8 79.5
+pointer motion: 295.8 81.1
+pointer motion: 295.0 82.8
+pointer motion: 295.0 83.7
+pointer motion: 295.0 84.6
+pointer motion: 294.1 85.5
+pointer motion: 293.2 86.4
+pointer motion: 292.3 87.2
+pointer motion: 291.5 88.1
+pointer motion: 291.5 89.9
+pointer motion: 290.6 90.8
+pointer motion: 290.6 91.6
+pointer motion: 289.7 92.5
+pointer motion: 288.8 93.4
+pointer motion: 287.9 93.4
+pointer motion: 287.1 94.2
+pointer motion: 286.4 94.9
+pointer motion: 291.7 95.7
+pointer motion: 296.9 96.6
+pointer motion: 300.4 97.5
+pointer motion: 305.7 98.3
+pointer motion: 309.2 99.2
+pointer motion: 315.4 99.2
+pointer motion: 323.3 101.0
+pointer motion: 331.2 102.7
+pointer motion: 338.2 104.5
+pointer motion: 346.1 106.2
+pointer motion: 351.4 107.1
+pointer motion: 357.6 108.9
+pointer motion: 365.5 111.5
+pointer motion: 373.4 113.3
+pointer motion: 385.0 115.9
+pointer motion: 392.1 117.7
+pointer motion: 398.3 119.5
+pointer motion: 403.5 120.4
+pointer motion: 411.4 122.1
+pointer motion: 420.2 124.8
+pointer motion: 428.1 128.3
+pointer motion: 436.0 130.9
+pointer motion: 442.2 134.4
+pointer motion: 447.5 137.1
+pointer motion: 452.7 139.7
+pointer motion: 458.9 144.1
+pointer motion: 466.8 150.2
+pointer motion: 477.9 156.7
+pointer motion: 484.2 160.3
+pointer motion: 490.3 163.8
+pointer motion: 494.7 167.3
+pointer motion: 500.8 171.7
+pointer motion: 506.1 175.2
+pointer motion: 511.4 180.5
+pointer motion: 516.7 184.9
+pointer motion: 521.1 189.3
+pointer motion: 525.4 192.8
+pointer motion: 529.8 196.3
+pointer motion: 531.6 198.1
+pointer motion: 534.2 199.8
+pointer motion: 536.0 201.6
+pointer motion: 539.5 203.4
+pointer motion: 541.3 204.2
+pointer motion: 544.8 206.0
+pointer motion: 548.3 207.7
+pointer motion: 549.2 208.6
+pointer motion: 550.1 208.6
+pointer motion: 548.4 208.6
+pointer motion: 546.8 208.6
+pointer motion: 544.1 207.7
+pointer motion: 538.9 206.9
+pointer motion: 533.6 204.2
+pointer motion: 528.3 202.5
+pointer motion: 521.3 199.8
+pointer motion: 516.0 198.1
+pointer motion: 509.0 195.4
+pointer motion: 504.6 194.6
+pointer motion: 497.6 191.9
+pointer motion: 492.3 190.2
+pointer motion: 480.7 186.6
+pointer motion: 473.6 184.8
+pointer motion: 464.8 182.2
+pointer motion: 459.5 181.3
+pointer motion: 455.1 180.4
+pointer motion: 449.8 179.6
+pointer motion: 445.4 178.7
+pointer motion: 441.0 177.8
+pointer motion: 435.8 177.8
+pointer motion: 430.5 176.9
+pointer motion: 426.1 176.9
+pointer motion: 421.7 176.9
+pointer motion: 419.1 176.9
+pointer motion: 416.4 176.9
+pointer motion: 413.8 176.9
+pointer motion: 412.1 176.9
+pointer motion: 409.4 176.9
+pointer motion: 408.5 176.9
+pointer motion: 407.7 176.9
+pointer motion: 406.8 176.9
+pointer motion: 398.9 177.8
+pointer motion: 394.5 177.8
+pointer motion: 389.2 177.8
+pointer motion: 381.3 177.8
+pointer motion: 372.5 177.8
+pointer motion: 362.8 177.8
+pointer motion: 354.1 176.9
+pointer motion: 347.0 176.0
+pointer motion: 342.6 176.0
+pointer motion: 337.4 175.2
+pointer motion: 329.5 175.2
+pointer motion: 324.2 174.3
+pointer motion: 317.2 173.4
+pointer motion: 311.9 173.4
+pointer motion: 308.4 173.4
+pointer motion: 304.9 172.5
+pointer motion: 301.3 172.5
+pointer motion: 299.6 172.5
+pointer motion: 297.8 172.5
+pointer motion: 296.1 172.5
+pointer motion: 295.2 172.5
+pointer motion: 294.3 172.5
+pointer motion: 293.4 172.5
+pointer motion: 292.6 172.5
+pointer motion: 292.6 170.9
+pointer motion: 292.6 169.4
+pointer motion: 291.7 167.6
+pointer motion: 291.7 165.8
+pointer motion: 290.8 162.3
+pointer motion: 289.9 159.7
+pointer motion: 289.0 154.4
+pointer motion: 288.2 143.8
+pointer motion: 283.4 143.8
+pointer motion: 278.6 143.0
+pointer motion: 266.7 143.0
+pointer motion: 259.1 144.9
+pointer motion: 249.5 145.8
+pointer motion: 241.6 146.7
+pointer motion: 236.3 146.7
+pointer motion: 231.0 146.7
+pointer motion: 225.7 147.5
+pointer motion: 218.7 149.3
+pointer motion: 217.1 151.7
+pointer motion: 215.5 154.1
+pointer motion: 214.7 155.8
+pointer motion: 212.0 158.5
+pointer motion: 208.5 162.0
+pointer motion: 200.4 168.3
+pointer motion: 195.9 171.9
+pointer motion: 193.3 174.5
+pointer motion: 189.7 177.2
+pointer motion: 187.1 179.8
+pointer motion: 182.7 183.3
+pointer motion: 180.1 175.4
+pointer motion: 177.4 166.6
+pointer motion: 175.7 158.7
+pointer motion: 173.0 151.7
+pointer motion: 167.8 130.7
+pointer motion: 164.2 112.8
+pointer motion: 162.4 105.5
+pointer motion: 159.7 96.6
+pointer motion: 155.9 81.2
+pointer motion: 155.0 73.2
+pointer motion: 154.1 66.2
+pointer motion: 152.4 58.3
+pointer motion: 151.5 52.1
+pointer motion: 150.6 43.3
+pointer motion: 148.8 35.4
+pointer motion: 148.0 28.4
+pointer motion: 147.1 22.3
+pointer motion: 146.2 11.7
+pointer motion: 145.3 9.0
+pointer motion: 143.6 2.9
+pointer motion: 142.7 1.1
+pointer motion: 158.5 -0.7
+pointer motion: 163.8 3.7
+pointer motion: 168.2 7.2
+pointer motion: 176.1 14.3
+pointer motion: 183.2 19.6
+pointer motion: 189.3 24.0
+pointer motion: 195.5 28.4
+pointer motion: 199.9 31.9
+pointer motion: 204.3 35.4
+pointer motion: 208.7 38.9
+pointer motion: 213.9 42.4
+pointer motion: 219.2 45.9
+pointer motion: 224.5 50.3
+pointer motion: 229.8 54.7
+pointer motion: 235.0 59.1
+pointer motion: 239.4 62.6
+pointer motion: 242.9 65.3
+pointer motion: 246.4 68.8
+pointer motion: 249.1 71.4
+pointer motion: 252.6 74.1
+pointer motion: 255.2 76.7
+pointer motion: 257.0 79.3
+pointer motion: 257.9 81.1
+pointer motion: 258.8 82.0
+pointer motion: 259.6 83.7
+pointer motion: 260.5 84.6
+pointer motion: 261.4 85.5
+pointer motion: 261.4 86.4
+pointer motion: 261.4 87.2
+pointer motion: 262.3 88.1
+pointer motion: 263.1 89.0
+pointer motion: 263.1 89.8
+pointer motion: 263.1 89.8
+pointer motion: 263.1 89.8
+pointer motion: 263.1 89.8
+pointer motion: 263.1 89.8
+pointer motion: 263.1 89.8
+pointer motion: 263.1 89.8
+pointer motion: 263.1 89.8
+pointer motion: 263.1 89.8
+pointer motion: 273.7 75.7
+pointer motion: 279.0 66.9
+pointer motion: 292.0 47.4
+pointer motion: 299.7 38.6
+pointer motion: 326.8 13.0

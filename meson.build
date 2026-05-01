@@ -35,15 +35,28 @@ xdg_shell_c   = custom_target('xdg-shell-code',
   input   : xdg_shell_xml,
   command : [scanner, 'private-code', '@INPUT@', '@OUTPUT@'])
 
+vk_xml = proto_dir / 'virtual-keyboard-unstable-v1.xml'
+vk_h   = custom_target('vk-header',
+  output  : 'virtual-keyboard-unstable-v1-client-protocol.h',
+  input   : vk_xml,
+  command : [scanner, 'client-header', '@INPUT@', '@OUTPUT@'])
+vk_c   = custom_target('vk-code',
+  output  : 'virtual-keyboard-unstable-v1-protocol.c',
+  input   : vk_xml,
+  command : [scanner, 'private-code', '@INPUT@', '@OUTPUT@'])
+
 # Sources
 typd_src = [
   'src/main.c',
   'src/virtual_kbd.c',
   'src/renderer.c',
+  'src/suggestions.c',
   layer_shell_h,
   layer_shell_c,
   xdg_shell_h,
   xdg_shell_c,
+  vk_h,
+  vk_c,
 ]
 
 typd_inc = include_directories('include')
@@ -54,3 +67,16 @@ executable('typd',
   dependencies        : [wayland_client, cairo, xkbcommon],
   install             : true
 )
+
+# Unit Tests
+test_trie = executable('test_trie',
+  ['tests/test_trie.c', 'src/suggestions.c'],
+  include_directories : typd_inc,
+)
+test('trie', test_trie, workdir : meson.current_source_dir())
+
+test_bktree = executable('test_bktree',
+  ['tests/test_bktree.c', 'src/suggestions.c'],
+  include_directories : typd_inc,
+)
+test('bktree', test_bktree, workdir : meson.current_source_dir())

@@ -1,0 +1,530 @@
+PROJECT: typd — Wayland-native virtual keyboard daemon (C11)
+REPO: /home/rev/Documents/projects/typd
+PHASE: 03 — Suggestion Engine: Trie (prefix autocomplete) + BK-Tree (fuzzy correction)
+GOAL: Implement a standalone suggestion engine in src/suggestions.c that loads
+      data/words.freq at startup, builds a Trie and BK-Tree in memory, and exposes
+      a clean API. Also write and pass unit tests in tests/test_trie.c and tests/test_bktree.c.
+      The engine must NOT be wired into the UI yet — pure logic + tests only this phase.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXT FROM PREVIOUS PHASES
+- Phase 1: Layer shell surface renders (src/virtual_kbd.c, src/renderer.c)
+- Phase 2: QWERTY grid draws, key injection works via zwp_virtual_keyboard_v1
+- src/suggestions.c and include/suggestions.h exist as empty stubs — fill them now
+- tests/test_trie.c and tests/test_bktree.c exist as empty stubs — fill them now
+- meson.build already exists — extend it, do not rewrite
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1 — PREPARE words.freq
+
+Create data/words.freq with this format (tab-separated, one entry per line):
+  the	23135851162
+  be	13526715320
+  to	12942219965
+  of	11073022313
+  and	10216516898
+  a	9284064226
+  in	7285771966
+  that	7026396786
+  have	6707764592
+  it	6706213002
+  for	5595337357
+  not	5086283063
+  on	4538546954
+  with	4510433389
+  he	4275508881
+  as	3833852624
+  you	3710117516
+  do	3639987421
+  at	3503006250
+  this	3351073665
+  but	3329406498
+  his	3070791498
+  by	2905111511
+  from	2854826225
+  they	2834005988
+  we	2794150623
+  say	2766742082
+  her	2739654887
+  she	2735025685
+  or	2600225955
+  an	2549847380
+  will	2516649764
+  my	2513502928
+  one	2505882386
+  all	2413701035
+  would	2359531741
+  there	2345560847
+  their	2332456285
+  what	2268253949
+  so	2260401071
+  up	2260381017
+  out	2230289128
+  if	2216822388
+  about	2194655536
+  who	2169699785
+  get	2168528621
+  which	2156673328
+  go	2144777812
+  me	2144570099
+  when	2105660044
+  hello	1800000000
+  help	1750000000
+  held	1700000000
+  world	1600000000
+  work	1550000000
+  word	1500000000
+  were	1450000000
+  well	1400000000
+  want	1350000000
+  came	1300000000
+  come	1250000000
+  some	1200000000
+  same	1150000000
+  time	1100000000
+  than	1050000000
+  then	1000000000
+  them	950000000
+  these	900000000
+  think	850000000
+  thing	800000000
+  know	750000000
+  just	700000000
+  good	650000000
+  give	600000000
+  life	550000000
+  live	500000000
+  line	450000000
+  like	400000000
+  love	350000000
+  look	300000000
+  long	280000000
+  list	260000000
+  last	240000000
+  left	220000000
+  less	200000000
+  best	180000000
+  been	160000000
+  back	140000000
+  also	120000000
+  after	100000000
+  again	95000000
+  away	90000000
+  ask	85000000
+  are	80000000
+  any	75000000
+  around	70000000
+
+This 90-word set is sufficient for Phase 3 testing.
+In Phase 9, replace with a real 50k-word dataset from wordfreq.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 2 — include/suggestions.h
+
+Define the complete public API:
+
+  #pragma once
+  #include <stdint.h>
+
+  #define MAX_WORD_LEN     64
+  #define MAX_SUGGESTIONS   3
+
+  // Single suggestion result
+  typedef struct {
+      char     word[MAX_WORD_LEN];
+      uint64_t score;        // frequency score (higher = better)
+      int      is_correction; // 1 if from BK-Tree fuzzy match, 0 if prefix match
+  } Suggestion;
+
+  // Opaque engine handle
+  typedef struct SuggestionEngine SuggestionEngine;
+
+  // Lifecycle
+  SuggestionEngine *suggestions_engine_create(const char *words_freq_path);
+  void              suggestions_engine_destroy(SuggestionEngine *engine);
+
+  // Query — prefix autocomplete (called while typing)
+  // Returns number of results written into out[] (0..MAX_SUGGESTIONS)
+  int suggestions_prefix(SuggestionEngine *engine,
+                         const char *prefix,
+                         Suggestion out[MAX_SUGGESTIONS]);
+
+  // Query — fuzzy correction (called when spacebar pressed, word complete)
+  // Returns 0 if word is in dictionary (no correction needed)
+  // Returns N>0 if corrections found, written into out[]
+  int suggestions_correct(SuggestionEngine *engine,
+                          const char *word,
+                          Suggestion out[MAX_SUGGESTIONS]);
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 3 — Trie Implementation (src/suggestions.c, part 1)
+
+Implement a standard Trie with frequency-aware prefix search.
+
+Data structure:
+  #define ALPHA_SIZE 26   // a-z only, lowercase
+
+  typedef struct TrieNode {
+      struct TrieNode *children[ALPHA_SIZE];
+      uint64_t         frequency;   // 0 if not a word endpoint
+      int              is_end;
+  } TrieNode;
+
+Functions (all static, internal):
+  static TrieNode *trie_node_create(void)
+    - calloc a TrieNode, all fields zeroed
+
+  static void trie_insert(TrieNode *root, const char *word, uint64_t freq)
+    - Iterate chars: idx = tolower(c) - 'a'
+    - Skip any char outside 0..25 (ignore apostrophes, hyphens)
+    - Create child nodes on demand
+    - At end: node->is_end = 1, node->frequency = freq
+
+  static void trie_collect(TrieNode *node, char *buf, int depth,
+                            Suggestion *out, int *count, int max)
+    - DFS from node, collecting all words up to max
+    - When is_end: write to out[*count], increment *count
+    - Stop recursing when *count == max
+    - This is a simple collector — we improve ranking below
+
+  static int trie_prefix_search(TrieNode *root, const char *prefix,
+                                 Suggestion out[], int max)
+    - Walk Trie to end of prefix — return 0 if prefix not found
+    - Call trie_collect from that node
+    - Sort out[] by score descending (simple insertion sort, max=3 so O(1) effectively)
+    - Return count
+
+  static void trie_free(TrieNode *node)
+    - Recursive free of all children, then free(node)
+
+IMPORTANT — sorting within collect:
+  trie_collect does a DFS which may return words in any order.
+  After collect, sort the out[] array by score descending.
+  Use a simple 3-element insertion sort since MAX_SUGGESTIONS = 3.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 4 — Levenshtein Distance (src/suggestions.c, part 2)
+
+Implement iterative DP (NOT recursive — avoids stack overflow on long words):
+
+  static int levenshtein(const char *a, const char *b) {
+      int la = strlen(a), lb = strlen(b);
+      // Use two rows only (space O(min(la,lb)))
+      int *prev = calloc(lb + 1, sizeof(int));
+      int *curr = calloc(lb + 1, sizeof(int));
+      for (int j = 0; j <= lb; j++) prev[j] = j;
+      for (int i = 1; i <= la; i++) {
+          curr[0] = i;
+          for (int j = 1; j <= lb; j++) {
+              int cost = (tolower(a[i-1]) == tolower(b[j-1])) ? 0 : 1;
+              curr[j] = MIN3(prev[j] + 1, curr[j-1] + 1, prev[j-1] + cost);
+          }
+          int *tmp = prev; prev = curr; curr = tmp;
+      }
+      int result = prev[lb];
+      free(prev); free(curr);
+      return result;
+  }
+
+  #define MIN3(a,b,c) ((a)<(b)?((a)<(c)?(a):(c)):((b)<(c)?(b):(c)))
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 5 — BK-Tree Implementation (src/suggestions.c, part 3)
+
+Data structure:
+  typedef struct BKNode {
+      char           word[MAX_WORD_LEN];
+      uint64_t       frequency;
+      struct BKNode *children[32];  // indexed by edit distance
+      int            child_dist[32];
+      int            child_count;
+  } BKNode;
+
+Functions (all static):
+  static BKNode *bknode_create(const char *word, uint64_t freq)
+    - malloc, strncpy word, set freq, zero children
+
+  static void bktree_insert(BKNode *root, const char *word, uint64_t freq)
+    - d = levenshtein(root->word, word)
+    - if d == 0: word already in tree (duplicate), return
+    - Find child with child_dist == d:
+        if found: recurse into that child
+        else: create new child at child_count, store d in child_dist[]
+    - Guard: if child_count >= 32, drop silently (overflow protection)
+
+  static void bktree_search(BKNode *node, const char *word, int max_dist,
+                             Suggestion *out, int *count, int max)
+    - d = levenshtein(node->word, word)
+    - if d > 0 && d <= max_dist: add to out if space, mark is_correction=1
+    - Recurse into children where child_dist in range [d-max_dist, d+max_dist]
+    - Stop if *count >= max
+
+  static void bktree_free(BKNode *node)
+    - Recursive free
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 6 — SuggestionEngine struct + lifecycle (src/suggestions.c, part 4)
+
+  struct SuggestionEngine {
+      TrieNode *trie_root;
+      BKNode   *bk_root;
+      int       word_count;
+  };
+
+  SuggestionEngine *suggestions_engine_create(const char *path):
+    - fopen(path, "r")
+    - If NULL: fprintf(stderr, "typd: words.freq not found: %s\n", path); return NULL
+    - Allocate engine
+    - engine->trie_root = trie_node_create()
+    - engine->bk_root = NULL  (set on first word)
+    - Parse each line: sscanf(line, "%63s\t%llu", word, &freq)
+      - tolower all chars in word
+      - trie_insert(engine->trie_root, word, freq)
+      - if engine->bk_root == NULL: engine->bk_root = bknode_create(word, freq)
+        else: bktree_insert(engine->bk_root, word, freq)
+      - engine->word_count++
+    - fclose
+    - fprintf(stderr, "typd: loaded %d words\n", engine->word_count)
+    - return engine
+
+  void suggestions_engine_destroy(SuggestionEngine *engine):
+    - trie_free(engine->trie_root)
+    - bktree_free(engine->bk_root)
+    - free(engine)
+
+  int suggestions_prefix(engine, prefix, out):
+    - If prefix empty or engine NULL: return 0
+    - return trie_prefix_search(engine->trie_root, prefix, out, MAX_SUGGESTIONS)
+
+  int suggestions_correct(engine, word, out):
+    - If engine NULL or word empty: return 0
+    - Check if word is in Trie (walk to end, check is_end):
+        if found in dict: return 0  (correct word, no suggestion needed)
+    - int count = 0
+    - bktree_search(engine->bk_root, word, 2, out, &count, MAX_SUGGESTIONS)
+    - Sort out[0..count] by score descending
+    - return count
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 7 — Unit Tests
+
+tests/test_trie.c:
+
+  #include "../include/suggestions.h"
+  #include <stdio.h>
+  #include <string.h>
+  #include <assert.h>
+
+  static void test_prefix_hel(void) {
+      SuggestionEngine *e = suggestions_engine_create("data/words.freq");
+      assert(e != NULL);
+      Suggestion out[MAX_SUGGESTIONS];
+      int n = suggestions_prefix(e, "hel", out);
+      assert(n >= 1);
+      // First result must be "hello" (highest frequency among hel*)
+      assert(strcmp(out[0].word, "hello") == 0);
+      assert(out[0].is_correction == 0);
+      suggestions_engine_destroy(e);
+      printf("PASS: test_prefix_hel\n");
+  }
+
+  static void test_prefix_empty(void) {
+      SuggestionEngine *e = suggestions_engine_create("data/words.freq");
+      assert(e != NULL);
+      Suggestion out[MAX_SUGGESTIONS];
+      int n = suggestions_prefix(e, "", out);
+      assert(n == 0);
+      suggestions_engine_destroy(e);
+      printf("PASS: test_prefix_empty\n");
+  }
+
+  static void test_prefix_no_match(void) {
+      SuggestionEngine *e = suggestions_engine_create("data/words.freq");
+      assert(e != NULL);
+      Suggestion out[MAX_SUGGESTIONS];
+      int n = suggestions_prefix(e, "zzzzz", out);
+      assert(n == 0);
+      suggestions_engine_destroy(e);
+      printf("PASS: test_prefix_no_match\n");
+  }
+
+  static void test_prefix_returns_max3(void) {
+      SuggestionEngine *e = suggestions_engine_create("data/words.freq");
+      assert(e != NULL);
+      Suggestion out[MAX_SUGGESTIONS];
+      int n = suggestions_prefix(e, "a", out);  // many words start with 'a'
+      assert(n <= MAX_SUGGESTIONS);
+      suggestions_engine_destroy(e);
+      printf("PASS: test_prefix_returns_max3\n");
+  }
+
+  int main(void) {
+      test_prefix_hel();
+      test_prefix_empty();
+      test_prefix_no_match();
+      test_prefix_returns_max3();
+      printf("ALL TRIE TESTS PASSED\n");
+      return 0;
+  }
+
+tests/test_bktree.c:
+
+  #include "../include/suggestions.h"
+  #include <stdio.h>
+  #include <string.h>
+  #include <assert.h>
+
+  static void test_correct_word_not_corrected(void) {
+      SuggestionEngine *e = suggestions_engine_create("data/words.freq");
+      assert(e != NULL);
+      Suggestion out[MAX_SUGGESTIONS];
+      int n = suggestions_correct(e, "hello", out);
+      assert(n == 0);  // "hello" is in dict, no correction
+      suggestions_engine_destroy(e);
+      printf("PASS: test_correct_word_not_corrected\n");
+  }
+
+  static void test_typo_distance1(void) {
+      SuggestionEngine *e = suggestions_engine_create("data/words.freq");
+      assert(e != NULL);
+      Suggestion out[MAX_SUGGESTIONS];
+      int n = suggestions_correct(e, "helo", out);  // distance 1 from "hello"
+      assert(n >= 1);
+      // At least one result should be "hello"
+      int found = 0;
+      for (int i = 0; i < n; i++)
+          if (strcmp(out[i].word, "hello") == 0) { found = 1; break; }
+      assert(found);
+      assert(out[0].is_correction == 1);
+      suggestions_engine_destroy(e);
+      printf("PASS: test_typo_distance1\n");
+  }
+
+  static void test_typo_distance2(void) {
+      SuggestionEngine *e = suggestions_engine_create("data/words.freq");
+      assert(e != NULL);
+      Suggestion out[MAX_SUGGESTIONS];
+      int n = suggestions_correct(e, "wrold", out);  // distance 2 from "world"
+      assert(n >= 1);
+      int found = 0;
+      for (int i = 0; i < n; i++)
+          if (strcmp(out[i].word, "world") == 0) { found = 1; break; }
+      assert(found);
+      suggestions_engine_destroy(e);
+      printf("PASS: test_typo_distance2\n");
+  }
+
+  static void test_no_result_distance3(void) {
+      SuggestionEngine *e = suggestions_engine_create("data/words.freq");
+      assert(e != NULL);
+      Suggestion out[MAX_SUGGESTIONS];
+      // "xyzabc" is far from everything
+      int n = suggestions_correct(e, "xyzabc", out);
+      (void)n;  // may or may not find something, just must not crash
+      suggestions_engine_destroy(e);
+      printf("PASS: test_no_result_distance3\n");
+  }
+
+  int main(void) {
+      test_correct_word_not_corrected();
+      test_typo_distance1();
+      test_typo_distance2();
+      test_no_result_distance3();
+      printf("ALL BK-TREE TESTS PASSED\n");
+      return 0;
+  }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 8 — Wire Tests into meson.build
+
+Append to meson.build (do NOT touch existing executable() block):
+
+  # Test executables — built but not part of main binary
+  test_trie_exe = executable('test_trie',
+    ['tests/test_trie.c', 'src/suggestions.c'],
+    include_directories: typd_inc,
+    dependencies: [],
+  )
+  test('trie tests', test_trie_exe,
+    workdir: meson.current_source_dir())
+
+  test_bktree_exe = executable('test_bktree',
+    ['tests/test_bktree.c', 'src/suggestions.c'],
+    include_directories: typd_inc,
+    dependencies: [],
+  )
+  test('bktree tests', test_bktree_exe,
+    workdir: meson.current_source_dir())
+
+Note: suggestions.c has NO Wayland or Cairo dependencies.
+It only uses libc (stdio, stdlib, string). Do NOT link wayland_client here.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ALSO ADD suggestions.c TO MAIN BINARY
+
+In meson.build, add 'src/suggestions.c' to typd_src list:
+  typd_src = [
+    'src/main.c',
+    'src/virtual_kbd.c',
+    'src/renderer.c',
+    'src/suggestions.c',   ← add this
+    layer_shell_c,
+    xdg_shell_c,
+    vkbd_c,
+  ]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONSTRAINTS
+
+- suggestions.c must be pure C11, zero Wayland/Cairo includes
+- All heap allocations must be freed — no leaks (tests run under valgrind in Phase 9)
+- MAX_WORD_LEN = 64: any word longer than 63 chars is truncated silently
+- BK-Tree: max_dist hardcoded to 2 (per PRD spec)
+- tolower() all words at insert and query time — engine is case-insensitive
+- Do NOT use global variables — everything inside SuggestionEngine struct
+- levenshtein: use iterative two-row DP only, no recursion
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BUILD + TEST
+
+  ninja -C build
+  ninja -C build test
+
+  Or run manually:
+  ./build/test_trie     # must print ALL TRIE TESTS PASSED
+  ./build/test_bktree   # must print ALL BK-TREE TESTS PASSED
+
+  Check startup log when running main binary:
+  ./build/typd          # must print: typd: loaded 90 words
+
+Performance check (run after tests pass):
+  time (for i in $(seq 1000); do ./build/test_trie; done) 2>&1 | tail -1
+  Target: 1000 runs complete under 10 seconds
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMMIT AFTER ALL TESTS PASS
+
+  git add src/suggestions.c include/suggestions.h \
+          tests/test_trie.c tests/test_bktree.c \
+          data/words.freq meson.build
+  git commit -m "feat(phase-3): Trie + BK-Tree suggestion engine, unit tests pass
+
+  - Trie: prefix search returning top-3 by frequency (O(prefix_len) lookup)
+  - BK-Tree: fuzzy correction at edit distance ≤ 2 (Levenshtein, iterative DP)
+  - SuggestionEngine: opaque handle, create/destroy/prefix/correct API
+  - 90-word words.freq seed dataset for testing
+  - 8 unit tests: all passing (test_trie + test_bktree)
+  - suggestions.c is pure C11, zero Wayland dependencies"

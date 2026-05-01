@@ -1,15 +1,19 @@
 use calloop::EventLoop;
 use calloop_wayland_source::WaylandSource;
 use wayland_client::{globals::registry_queue_init, Connection};
+pub extern crate wayland_backend;
+pub extern crate wayland_client;
 
-mod renderer;
-mod virtual_kbd;
-mod suggestions;
-mod layout;
-mod input_method;
-mod popup;
-mod context_detect;
 mod config;
+mod context_detect;
+mod input_method;
+mod layout;
+mod popup;
+mod renderer;
+mod suggestions;
+mod virtual_kbd;
+
+mod vkbd_proto;
 
 use virtual_kbd::TypdApp;
 
@@ -17,8 +21,8 @@ fn main() {
     let conn = Connection::connect_to_env()
         .expect("Failed to connect to Wayland display. Is WAYLAND_DISPLAY set?");
 
-    let (globals, event_queue) = registry_queue_init::<TypdApp>(&conn)
-        .expect("Failed to init Wayland registry");
+    let (globals, event_queue) =
+        registry_queue_init::<TypdApp>(&conn).expect("Failed to init Wayland registry");
 
     let qh = event_queue.handle();
 
@@ -37,5 +41,6 @@ fn main() {
         event_loop
             .dispatch(Some(std::time::Duration::from_millis(16)), &mut app)
             .unwrap();
+        app.tick(&conn, &qh);
     }
 }

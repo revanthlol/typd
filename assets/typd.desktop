@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=typd
+Comment=Wayland virtual keyboard
+Exec=typd
+Terminal=false
+Categories=Utility;Accessibility;
+Keywords=keyboard;wayland;virtual keyboard;

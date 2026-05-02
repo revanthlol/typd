@@ -1,0 +1,29 @@
+{
+  "app-id": "dev.typd",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "23.08",
+  "sdk": "org.freedesktop.Sdk",
+  "command": "typd",
+  "finish-args": [
+    "--socket=wayland",
+    "--share=ipc",
+    "--device=all"
+  ],
+  "modules": [
+    {
+      "name": "typd",
+      "buildsystem": "simple",
+      "build-commands": [
+        "cargo build --release",
+        "install -Dm755 target/release/typd /app/bin/typd",
+        "install -Dm644 assets/typd.desktop /app/share/applications/dev.typd.desktop"
+      ],
+      "sources": [
+        {
+          "type": "dir",
+          "path": "../../.."
+        }
+      ]
+    }
+  ]
+}

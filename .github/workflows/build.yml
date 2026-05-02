@@ -1,0 +1,138 @@
+name: Build typd
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  release:
+    types:
+      - created
+
+env:
+  APP_NAME: typd
+  VERSION: ${{ github.ref_name }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            libwayland-dev \
+            libxkbcommon-dev \
+            libcairo2-dev \
+            wayland-protocols \
+            pkg-config \
+            build-essential \
+            ruby \
+            ruby-dev \
+            flatpak \
+            flatpak-builder \
+            fuse \
+            desktop-file-utils
+
+          sudo gem install fpm
+
+      - name: Normalize version
+        run: |
+          VERSION="${VERSION#refs/tags/}"
+          VERSION="${VERSION#refs/heads/}"
+          VERSION="${VERSION//\//-}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Build release binary
+        run: cargo build --release
+
+      - name: Prepare build dir
+        run: |
+          mkdir -p build
+          cp target/release/${APP_NAME} build/
+
+      - name: Create tarball
+        run: |
+          tar -czvf build/${APP_NAME}-${VERSION}.tar.gz -C build ${APP_NAME}
+
+      - name: Build .deb
+        run: |
+          fpm -s dir -t deb \
+            -n ${APP_NAME} \
+            -v ${VERSION} \
+            --depends libwayland-client0 \
+            --depends libcairo2 \
+            --depends libxkbcommon0 \
+            build/${APP_NAME}=/usr/bin/${APP_NAME}
+
+      - name: Build .rpm
+        run: |
+          fpm -s dir -t rpm \
+            -n ${APP_NAME} \
+            -v ${VERSION} \
+            --depends wayland \
+            --depends cairo \
+            --depends xkbcommon \
+            build/${APP_NAME}=/usr/bin/${APP_NAME}
+
+      - name: Build AppImage
+        run: |
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/share/applications
+          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+
+          cp build/${APP_NAME} AppDir/usr/bin/
+          cp assets/typd.desktop AppDir/usr/share/applications/
+
+          cat > AppDir/AppRun <<'EOF'
+          #!/bin/sh
+          exec "$(dirname "$0")/usr/bin/typd" "$@"
+          EOF
+          chmod +x AppDir/AppRun
+
+          wget -q https://github.com/AppImage/AppImageKit/releases/latest/download/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+          ./appimagetool-x86_64.AppImage AppDir ${APP_NAME}.AppImage
+
+      - name: Build Flatpak
+        run: |
+          flatpak-builder --force-clean build-dir packaging/flatpak/typd.json
+          flatpak build-export repo build-dir
+          flatpak build-bundle repo ${APP_NAME}.flatpak dev.typd
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: typd-builds
+          path: |
+            build/*.tar.gz
+            *.deb
+            *.rpm
+            *.AppImage
+            *.flatpak
+
+      - name: Upload to Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/*.tar.gz
+            *.deb
+            *.rpm
+            *.AppImage
+            *.flatpak

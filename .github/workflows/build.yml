@@ -44,8 +44,6 @@ jobs:
             build-essential \
             ruby \
             ruby-dev \
-            flatpak \
-            flatpak-builder \
             fuse3 \
             libfuse2 \
             desktop-file-utils
@@ -91,12 +89,6 @@ jobs:
             --depends xkbcommon \
             build/${APP_NAME}=/usr/bin/${APP_NAME}
 
-      - name: Build Flatpak
-        run: |
-          flatpak-builder --force-clean build-dir packaging/flatpak/typd.json
-          flatpak build-export repo build-dir
-          flatpak build-bundle repo ${APP_NAME}.flatpak dev.typd
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -105,7 +97,6 @@ jobs:
             build/*.tar.gz
             *.deb
             *.rpm
-            *.flatpak
 
       - name: Upload to Release
         if: github.event_name == 'release'
@@ -115,4 +106,3 @@ jobs:
             build/*.tar.gz
             *.deb
             *.rpm
-            *.flatpak

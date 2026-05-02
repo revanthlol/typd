@@ -48,7 +48,8 @@ jobs:
             flatpak-builder \
             fuse3 \
             libfuse2 \
-            desktop-file-utils
+            desktop-file-utils \
+            appstream
 
           sudo gem install fpm
 
@@ -95,11 +96,13 @@ jobs:
         run: |
           mkdir -p AppDir/usr/bin
           mkdir -p AppDir/usr/share/applications
+          mkdir -p AppDir/usr/share/metainfo
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
 
           cp build/${APP_NAME} AppDir/usr/bin/
           cp assets/typd.desktop AppDir/usr/share/applications/
           cp assets/typd.desktop AppDir/typd.desktop
+          cp assets/dev.typd.metainfo.xml AppDir/usr/share/metainfo/dev.typd.metainfo.xml
           cp assets/icon.png AppDir/usr/share/icons/hicolor/256x256/apps/typd.png
 
           cat > AppDir/AppRun <<'EOF'
@@ -107,6 +110,8 @@ jobs:
           exec "$(dirname "$0")/usr/bin/typd" "$@"
           EOF
           chmod +x AppDir/AppRun
+
+          appstreamcli validate --no-net AppDir/usr/share/metainfo/dev.typd.metainfo.xml
 
           wget -q https://github.com/AppImage/AppImageKit/releases/latest/download/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage

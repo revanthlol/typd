@@ -7,3 +7,4 @@ Icon=typd
 Terminal=false
 Categories=Utility;Accessibility;
 Keywords=keyboard;wayland;virtual keyboard;
+StartupWMClass=typd

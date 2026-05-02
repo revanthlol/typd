@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>dev.typd</id>
+  <name>typd</name>
+  <summary>Wayland virtual keyboard</summary>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>typd is a Wayland virtual keyboard with draggable chrome, resize handling, and key state feedback.</p>
+  </description>
+  <launchable type="desktop-id">typd.desktop</launchable>
+  <provides>
+    <binary>typd</binary>
+  </provides>
+</component>

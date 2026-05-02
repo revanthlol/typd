@@ -87,3 +87,144 @@ Direct Rust dependencies from `Cargo.toml`:
 - typd is a Wayland-only application.
 - The app is intended to run as a floating keyboard surface rather than a normal desktop window.
 - Some compositor capabilities are optional, so behavior can vary depending on the Wayland environment.
+
+## Dependency Tree
+
+The tree below was generated from the current lockfile with:
+
+```bash
+cargo tree --no-dev-dependencies
+```
+
+```text
+typd v0.1.0 (/home/rev/Documents/projects/typd)
+├── cairo-rs v0.18.5
+│   ├── bitflags v2.11.1
+│   ├── cairo-sys-rs v0.18.2
+│   │   └── libc v0.2.186
+│   │   [build-dependencies]
+│   │   └── system-deps v6.2.2
+│   │       ├── cfg-expr v0.15.8
+│   │       │   ├── smallvec v1.15.1
+│   │       │   └── target-lexicon v0.12.16
+│   │       ├── heck v0.5.0
+│   │       ├── pkg-config v0.3.33
+│   │       ├── toml v0.8.2
+│   │       │   ├── serde v1.0.228
+│   │       │   │   └── serde_core v1.0.228
+│   │       │   ├── serde_spanned v0.6.9
+│   │       │   │   └── serde v1.0.228 (*)
+│   │       │   ├── toml_datetime v0.6.3
+│   │       │   │   └── serde v1.0.228 (*)
+│   │       │   └── toml_edit v0.20.2
+│   │       │       ├── indexmap v2.14.0
+│   │       │       │   ├── equivalent v1.0.2
+│   │       │       │   └── hashbrown v0.17.0
+│   │       │       ├── serde v1.0.228 (*)
+│   │       │       ├── serde_spanned v0.6.9 (*)
+│   │       │       ├── toml_datetime v0.6.3 (*)
+│   │       │       └── winnow v0.5.40
+│   │       └── version-compare v0.2.1
+│   ├── libc v0.2.186
+│   ├── once_cell v1.21.4
+│   └── thiserror v1.0.69
+│       └── thiserror-impl v1.0.69 (proc-macro)
+│           ├── proc-macro2 v1.0.106
+│           │   └── unicode-ident v1.0.24
+│           ├── quote v1.0.45
+│           │   └── proc-macro2 v1.0.106 (*)
+│           └── syn v2.0.117
+│               ├── proc-macro2 v1.0.106 (*)
+│               ├── quote v1.0.45 (*)
+│               └── unicode-ident v1.0.24
+├── calloop v0.12.4
+│   ├── bitflags v2.11.1
+│   ├── log v0.4.29
+│   ├── polling v3.11.0
+│   │   ├── cfg-if v1.0.4
+│   │   └── rustix v1.1.4
+│   │       ├── bitflags v2.11.1
+│   │       └── linux-raw-sys v0.12.1
+│   ├── rustix v0.38.44
+│   │   ├── bitflags v2.11.1
+│   │   └── linux-raw-sys v0.4.15
+│   ├── slab v0.4.12
+│   └── thiserror v1.0.69 (*)
+├── calloop-wayland-source v0.2.0
+│   ├── calloop v0.12.4 (*)
+│   ├── rustix v0.38.44 (*)
+│   ├── wayland-backend v0.3.15
+│   │   ├── downcast-rs v1.2.1
+│   │   ├── rustix v1.1.4 (*)
+│   │   ├── smallvec v1.15.1
+│   │   └── wayland-sys v0.31.11
+│   │       [build-dependencies]
+│   │       └── pkg-config v0.3.33
+│   │   [build-dependencies]
+│   │   └── cc v1.2.61
+│   │       ├── find-msvc-tools v0.1.9
+│   │       └── shlex v1.3.0
+│   └── wayland-client v0.31.14
+│       ├── bitflags v2.11.1
+│       ├── rustix v1.1.4 (*)
+│       ├── wayland-backend v0.3.15 (*)
+│       └── wayland-scanner v0.31.10 (proc-macro)
+│           ├── proc-macro2 v1.0.106 (*)
+│           ├── quick-xml v0.39.2
+│           │   └── memchr v2.8.0
+│           └── quote v1.0.45 (*)
+├── libc v0.2.186
+├── smithay-client-toolkit v0.18.1
+│   ├── bitflags v2.11.1
+│   ├── calloop v0.12.4 (*)
+│   ├── calloop-wayland-source v0.2.0 (*)
+│   ├── cursor-icon v1.2.0
+│   ├── libc v0.2.186
+│   ├── log v0.4.29
+│   ├── memmap2 v0.9.10
+│   │   └── libc v0.2.186
+│   ├── rustix v0.38.44 (*)
+│   ├── thiserror v1.0.69 (*)
+│   ├── wayland-backend v0.3.15 (*)
+│   ├── wayland-client v0.31.14 (*)
+│   ├── wayland-csd-frame v0.3.0
+│   │   ├── bitflags v2.11.1
+│   │   ├── cursor-icon v1.2.0
+│   │   └── wayland-backend v0.3.15 (*)
+│   ├── wayland-cursor v0.31.14
+│   │   ├── rustix v1.1.4 (*)
+│   │   ├── wayland-client v0.31.14 (*)
+│   │   └── xcursor v0.3.10
+│   ├── wayland-protocols v0.31.2
+│   │   ├── bitflags v2.11.1
+│   │   ├── wayland-backend v0.3.15 (*)
+│   │   ├── wayland-client v0.31.14 (*)
+│   │   └── wayland-scanner v0.31.10 (proc-macro) (*)
+│   ├── wayland-protocols-wlr v0.2.0
+│   │   ├── bitflags v2.11.1
+│   │   ├── wayland-backend v0.3.15 (*)
+│   │   ├── wayland-client v0.31.14 (*)
+│   │   ├── wayland-protocols v0.31.2 (*)
+│   │   └── wayland-scanner v0.31.10 (proc-macro) (*)
+│   ├── wayland-scanner v0.31.10 (proc-macro) (*)
+│   └── xkeysym v0.2.1
+├── wayland-backend v0.3.15 (*)
+├── wayland-client v0.31.14 (*)
+├── wayland-protocols v0.32.12
+│   ├── bitflags v2.11.1
+│   ├── wayland-backend v0.3.15 (*)
+│   ├── wayland-client v0.31.14 (*)
+│   └── wayland-scanner v0.31.10 (proc-macro) (*)
+├── wayland-protocols-wlr v0.3.12
+│   ├── bitflags v2.11.1
+│   ├── wayland-backend v0.3.15 (*)
+│   ├── wayland-client v0.31.14 (*)
+│   ├── wayland-protocols v0.32.12 (*)
+│   └── wayland-scanner v0.31.10 (proc-macro) (*)
+├── wayland-scanner v0.31.10 (proc-macro) (*)
+└── xkbcommon v0.7.0
+    ├── libc v0.2.186
+    ├── memmap2 v0.8.0
+    │   └── libc v0.2.186
+    └── xkeysym v0.2.1
+```

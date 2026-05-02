@@ -99,6 +99,8 @@ jobs:
 
           cp build/${APP_NAME} AppDir/usr/bin/
           cp assets/typd.desktop AppDir/usr/share/applications/
+          cp assets/typd.desktop AppDir/typd.desktop
+          cp assets/icon.png AppDir/usr/share/icons/hicolor/256x256/apps/typd.png
 
           cat > AppDir/AppRun <<'EOF'
           #!/bin/sh

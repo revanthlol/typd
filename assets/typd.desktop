@@ -3,6 +3,7 @@ Type=Application
 Name=typd
 Comment=Wayland virtual keyboard
 Exec=typd
+Icon=typd
 Terminal=false
 Categories=Utility;Accessibility;
 Keywords=keyboard;wayland;virtual keyboard;

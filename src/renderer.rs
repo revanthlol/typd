@@ -11,6 +11,7 @@ pub fn draw_keyboard(
     caps: bool,
     ctrl: bool,
     alt: bool,
+    num: bool,
     hover_key_id: Option<usize>,
     active_key_id: Option<usize>,
     vkbd_ready: bool,
@@ -126,6 +127,7 @@ pub fn draw_keyboard(
         let is_caps = key.def.action == crate::layout::KeyAction::Caps;
         let is_ctrl = key.def.action == crate::layout::KeyAction::Ctrl;
         let is_alt = key.def.action == crate::layout::KeyAction::Alt;
+        let is_num = key.def.action == crate::layout::KeyAction::NumLock;
         let is_space = key.def.linux_keycode == Some(57);
         let is_special = key.def.action != crate::layout::KeyAction::Key
             || matches!(
@@ -147,6 +149,8 @@ pub fn draw_keyboard(
             cr.set_source_rgba(0.2, 0.43, 0.72, 1.0);
         } else if is_alt && alt {
             cr.set_source_rgba(0.35, 0.38, 0.68, 1.0);
+        } else if is_num && num {
+            cr.set_source_rgba(0.38, 0.53, 0.22, 1.0);
         } else if is_hovered {
             cr.set_source_rgba(1.0, 1.0, 1.0, 0.16);
         } else if is_special {

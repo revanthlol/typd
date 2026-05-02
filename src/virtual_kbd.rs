@@ -114,6 +114,7 @@ pub struct TypdApp {
     pub caps_active: bool,
     pub ctrl_active: bool,
     pub alt_active: bool,
+    pub num_active: bool,
     pub sidebar_expanded: bool,
     pub keys: Vec<ComputedKey>,
     pub hover_key_id: Option<usize>,
@@ -661,6 +662,7 @@ impl TypdApp {
             caps_active: false,
             ctrl_active: false,
             alt_active: false,
+            num_active: false,
             sidebar_expanded: false,
             keys: Vec::new(),
             hover_key_id: None,
@@ -772,6 +774,12 @@ impl TypdApp {
             }
             KeyAction::Alt => {
                 self.alt_active = !self.alt_active;
+            }
+            KeyAction::NumLock => {
+                self.num_active = !self.num_active;
+                if let Some(keycode) = key.def.linux_keycode {
+                    self.inject_key(keycode, self.shift_active, self.ctrl_active, self.alt_active, conn);
+                }
             }
             KeyAction::Key => {
                 let Some(keycode) = key.def.linux_keycode else {
@@ -1018,6 +1026,7 @@ impl TypdApp {
             self.caps_active,
             self.ctrl_active,
             self.alt_active,
+            self.num_active,
             self.hover_key_id,
             self.active_key_id,
             self.vkbd_ready(),

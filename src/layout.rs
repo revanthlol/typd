@@ -10,6 +10,7 @@ pub enum KeyAction {
     Caps,
     Ctrl,
     Alt,
+    NumLock,
     ToggleSidebar,
 }
 
@@ -196,7 +197,7 @@ pub fn sidebar_rows() -> Vec<Vec<KeyDef>> {
         vec![
             key("Home", "Home", 102),
             key("PgUp", "PgUp", 104),
-            key("Num", "Num", 69),
+            action_key("Num", KeyAction::NumLock, 1.0),
         ],
         vec![
             key("End", "End", 107),

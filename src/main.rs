@@ -10,7 +10,6 @@ mod input_method;
 mod layout;
 mod popup;
 mod renderer;
-mod suggestions;
 mod virtual_kbd;
 
 mod vkbd_proto;
@@ -38,9 +37,10 @@ fn main() {
     eprintln!("typd: surface initialized {}x{}", app.width, app.height);
 
     while app.running {
-        event_loop
-            .dispatch(Some(std::time::Duration::from_millis(16)), &mut app)
-            .unwrap();
+        if let Err(err) = event_loop.dispatch(Some(std::time::Duration::from_millis(16)), &mut app) {
+            eprintln!("typd: event loop stopped: {err}");
+            break;
+        }
         app.tick(&conn, &qh);
     }
 }

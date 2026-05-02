@@ -14,13 +14,19 @@ pub fn draw_keyboard(
     num: bool,
     hover_key_id: Option<usize>,
     active_key_id: Option<usize>,
+    physical_active_key_ids: &[usize],
     vkbd_ready: bool,
+    hidden: bool,
 ) {
     // 1. Clear to transparent
     cr.set_operator(cairo::Operator::Source);
     cr.set_source_rgba(0.0, 0.0, 0.0, 0.0);
     cr.paint().unwrap();
     cr.set_operator(cairo::Operator::Over);
+
+    if hidden {
+        return;
+    }
 
     let w = width as f64;
     let h = height as f64;
@@ -64,29 +70,22 @@ pub fn draw_keyboard(
     let close_size = 20.0;
     let close_x = w - close_size - 10.0;
     let close_y = (crate::layout::DRAG_BAR_HEIGHT - close_size) / 2.0;
+    let close_cx = close_x + close_size / 2.0;
+    let close_cy = close_y + close_size / 2.0;
     cr.set_source_rgba(0.82, 0.18, 0.18, 0.92);
-    rounded_path(cr, close_x, close_y, close_size, close_size, 5.0);
+    cr.arc(close_cx, close_cy, close_size / 2.0, 0.0, PI * 2.0);
     cr.fill().unwrap();
     cr.set_source_rgb(1.0, 1.0, 1.0);
     cr.set_line_width(1.6);
-    let (cx, cy, p) = (close_x + close_size / 2.0, close_y + close_size / 2.0, 4.2);
-    cr.move_to(cx - p, cy - p);
-    cr.line_to(cx + p, cy + p);
+    let p = 4.2;
+    cr.move_to(close_cx - p, close_cy - p);
+    cr.line_to(close_cx + p, close_cy + p);
     cr.stroke().unwrap();
-    cr.move_to(cx + p, cy - p);
-    cr.line_to(cx - p, cy + p);
+    cr.move_to(close_cx + p, close_cy - p);
+    cr.line_to(close_cx - p, close_cy + p);
     cr.stroke().unwrap();
     cr.restore().unwrap();
 
-    // 5. Suggestion strip placeholder
-    cr.set_source_rgba(0.0, 0.0, 0.0, 0.25);
-    cr.rectangle(
-        0.0,
-        crate::layout::DRAG_BAR_HEIGHT,
-        w,
-        crate::layout::SUGGESTION_STRIP_HEIGHT,
-    );
-    cr.fill().unwrap();
     if !vkbd_ready {
         cr.set_source_rgba(1.0, 0.78, 0.26, 0.92);
         cr.select_font_face(UI_FONT, cairo::FontSlant::Normal, cairo::FontWeight::Normal);
@@ -136,7 +135,8 @@ pub fn draw_keyboard(
             )
             || is_shift
             || is_space;
-        let is_active = active_key_id == Some(key.id);
+        let is_active =
+            active_key_id == Some(key.id) || physical_active_key_ids.contains(&key.id);
         let is_hovered = hover_key_id == Some(key.id);
 
         if is_active {

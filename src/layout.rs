@@ -1,5 +1,4 @@
 pub const DRAG_BAR_HEIGHT: f64 = 32.0;
-pub const SUGGESTION_STRIP_HEIGHT: f64 = 38.0;
 pub const SIDEBAR_WIDTH: f64 = 260.0;
 pub const SIDEBAR_GAP: f64 = 8.0;
 
@@ -93,7 +92,7 @@ pub fn action_key(label: &'static str, action: KeyAction, mul: f64) -> KeyDef {
     }
 }
 
-pub fn main_rows(sidebar_expanded: bool) -> Vec<Vec<KeyDef>> {
+pub fn main_rows() -> Vec<Vec<KeyDef>> {
     vec![
         vec![
             wide("Esc", "Esc", 1, 1.0),
@@ -183,11 +182,7 @@ pub fn main_rows(sidebar_expanded: bool) -> Vec<Vec<KeyDef>> {
             wide("←", "←", 105, 1.0),
             wide("↓", "↓", 108, 1.0),
             wide("→", "→", 106, 1.0),
-            action_key(
-                if sidebar_expanded { "<<" } else { ">>" },
-                KeyAction::ToggleSidebar,
-                1.15,
-            ),
+            action_key(">>", KeyAction::ToggleSidebar, 1.15),
         ],
     ]
 }
@@ -214,6 +209,7 @@ pub fn sidebar_rows() -> Vec<Vec<KeyDef>> {
             key("Menu", "Menu", 127),
             key("Help", "Help", 138),
         ],
+        vec![action_key("<<", KeyAction::ToggleSidebar, 3.0)],
     ]
 }
 
@@ -227,23 +223,18 @@ pub struct ComputedKey {
     pub h: f64,
 }
 
-pub fn compute_layout(surface_w: f64, surface_h: f64, sidebar_expanded: bool) -> Vec<ComputedKey> {
+pub fn compute_main_layout(surface_w: f64, surface_h: f64) -> Vec<ComputedKey> {
     let outer_pad = (surface_w * 0.007).clamp(6.0, 12.0);
     let row_gap = (surface_h * 0.01).clamp(3.0, 7.0);
     let key_gap = (surface_w * 0.0035).clamp(3.0, 6.0);
-    let top_chrome = (DRAG_BAR_HEIGHT + SUGGESTION_STRIP_HEIGHT).min(surface_h * 0.28);
+    let top_chrome = DRAG_BAR_HEIGHT.min(surface_h * 0.28);
     let key_area_y = top_chrome + row_gap;
     let key_area_h = (surface_h - key_area_y - outer_pad).max(180.0);
-    let rows = main_rows(sidebar_expanded);
+    let rows = main_rows();
     let row_h =
         ((key_area_h - row_gap * (rows.len() as f64 - 1.0)) / rows.len() as f64).clamp(34.0, 74.0);
 
-    let sidebar_w = if sidebar_expanded { SIDEBAR_WIDTH } else { 0.0 };
-    let main_w = if sidebar_expanded {
-        surface_w - outer_pad * 2.0 - sidebar_w - SIDEBAR_GAP
-    } else {
-        surface_w - outer_pad * 2.0
-    };
+    let main_w = surface_w - outer_pad * 2.0;
 
     let mut result = Vec::new();
     let mut id = 0;
@@ -270,42 +261,49 @@ pub fn compute_layout(surface_w: f64, surface_h: f64, sidebar_expanded: bool) ->
             kx += kw + key_gap;
         }
     }
-
-    if sidebar_expanded {
-        let side_x = outer_pad + main_w + SIDEBAR_GAP;
-        let side_rows = sidebar_rows();
-        let side_row_h = ((key_area_h - row_gap * (side_rows.len() as f64 - 1.0))
-            / side_rows.len() as f64)
-            .clamp(34.0, 74.0);
-
-        for (ri, row) in side_rows.iter().enumerate() {
-            let total_units: f64 = row.iter().map(|k| k.width_mul).sum();
-            let usable_w = (sidebar_w - key_gap * (row.len() as f64 - 1.0)).max(120.0);
-            let unit_w = usable_w / total_units;
-            let mut kx = side_x;
-            let ky = key_area_y + ri as f64 * (side_row_h + row_gap);
-
-            for def in row {
-                let kw = def.width_mul * unit_w;
-                result.push(ComputedKey {
-                    id,
-                    def: def.clone(),
-                    x: kx,
-                    y: ky,
-                    w: kw,
-                    h: side_row_h,
-                });
-                id += 1;
-                kx += kw + key_gap;
-            }
-        }
-    }
-
     result
 }
 
-pub fn sidebar_delta() -> u32 {
-    (SIDEBAR_WIDTH + SIDEBAR_GAP).round() as u32
+pub fn compute_sidebar_layout(surface_h: f64, start_id: usize) -> Vec<ComputedKey> {
+    let surface_w = SIDEBAR_WIDTH;
+    let outer_pad = 8.0;
+    let row_gap = (surface_h * 0.01).clamp(3.0, 7.0);
+    let key_gap = (surface_w * 0.01).clamp(3.0, 6.0);
+    let top_chrome = DRAG_BAR_HEIGHT.min(surface_h * 0.28);
+    let key_area_y = top_chrome + row_gap;
+    let key_area_h = (surface_h - key_area_y - outer_pad).max(180.0);
+
+    let side_rows = sidebar_rows();
+    let side_row_h = ((key_area_h - row_gap * (side_rows.len() as f64 - 1.0))
+        / side_rows.len() as f64)
+        .clamp(34.0, 74.0);
+
+    let mut result = Vec::new();
+    let mut id = start_id;
+
+    for (ri, row) in side_rows.iter().enumerate() {
+        let total_units: f64 = row.iter().map(|k| k.width_mul).sum();
+        let usable_w =
+            (surface_w - outer_pad * 2.0 - key_gap * (row.len() as f64 - 1.0)).max(120.0);
+        let unit_w = usable_w / total_units;
+        let mut kx = outer_pad;
+        let ky = key_area_y + ri as f64 * (side_row_h + row_gap);
+
+        for def in row {
+            let kw = def.width_mul * unit_w;
+            result.push(ComputedKey {
+                id,
+                def: def.clone(),
+                x: kx,
+                y: ky,
+                w: kw,
+                h: side_row_h,
+            });
+            id += 1;
+            kx += kw + key_gap;
+        }
+    }
+    result
 }
 
 pub fn is_alpha_key(keycode: u32) -> bool {

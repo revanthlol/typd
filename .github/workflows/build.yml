@@ -46,7 +46,8 @@ jobs:
             ruby-dev \
             flatpak \
             flatpak-builder \
-            fuse \
+            fuse3 \
+            libfuse2 \
             desktop-file-utils
 
           sudo gem install fpm

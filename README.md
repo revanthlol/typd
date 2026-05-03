@@ -20,6 +20,54 @@
 
 If a compositor does not provide a given protocol, typd will usually keep running with reduced functionality rather than hard-failing.
 
+## Installation
+
+### Arch Linux (AUR)
+
+Package name: `typd-bin`
+
+Using an AUR helper:
+
+```bash
+yay -S typd-bin
+```
+
+Manual install with `makepkg`:
+
+```bash
+git clone https://aur.archlinux.org/typd-bin.git
+cd typd-bin
+makepkg -si
+```
+
+### Debian / Ubuntu
+
+```bash
+sudo apt install ./typd-*.deb
+```
+
+### Fedora
+
+```bash
+sudo dnf install ./typd-*.rpm
+```
+
+### Universal (binary)
+
+Download the release tarball, extract it, and run the binary:
+
+```bash
+tar -xzf typd-v*.tar.gz
+./typd
+```
+
+### From source
+
+```bash
+cargo build --release
+./target/release/typd
+```
+
 ## Build
 
 ```bash
